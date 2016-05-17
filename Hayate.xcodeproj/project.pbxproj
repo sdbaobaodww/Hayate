@@ -1,0 +1,651 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		892749E21CEB33EE006B311C /* HayateHttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892749E11CEB33EE006B311C /* HayateHttpManager.swift */; };
+		892749E71CEB55BA006B311C /* HayateGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892749E61CEB55BA006B311C /* HayateGlobal.swift */; };
+		892749F01CEB55F2006B311C /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 892749EF1CEB55F2006B311C /* SSKeychain.m */; };
+		897B46881CE37D6D004B8760 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B46871CE37D6D004B8760 /* AppDelegate.swift */; };
+		897B468A1CE37D6D004B8760 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B46891CE37D6D004B8760 /* ViewController.swift */; };
+		897B468D1CE37D6D004B8760 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 897B468B1CE37D6D004B8760 /* Main.storyboard */; };
+		897B468F1CE37D6D004B8760 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 897B468E1CE37D6D004B8760 /* Assets.xcassets */; };
+		897B46921CE37D6D004B8760 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 897B46901CE37D6D004B8760 /* LaunchScreen.storyboard */; };
+		897B469D1CE37D6D004B8760 /* HayateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B469C1CE37D6D004B8760 /* HayateTests.swift */; };
+		897B46A81CE37D6D004B8760 /* HayateUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B46A71CE37D6D004B8760 /* HayateUITests.swift */; };
+		897B46D01CE37E29004B8760 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46BE1CE37E29004B8760 /* AFHTTPRequestOperation.m */; };
+		897B46D11CE37E29004B8760 /* AFHTTPRequestOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46C01CE37E29004B8760 /* AFHTTPRequestOperationManager.m */; };
+		897B46D21CE37E29004B8760 /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46C21CE37E29004B8760 /* AFHTTPSessionManager.m */; };
+		897B46D31CE37E29004B8760 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46C51CE37E29004B8760 /* AFNetworkReachabilityManager.m */; };
+		897B46D41CE37E29004B8760 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46C71CE37E29004B8760 /* AFSecurityPolicy.m */; };
+		897B46D51CE37E29004B8760 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46C91CE37E29004B8760 /* AFURLConnectionOperation.m */; };
+		897B46D61CE37E29004B8760 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46CB1CE37E29004B8760 /* AFURLRequestSerialization.m */; };
+		897B46D71CE37E29004B8760 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46CD1CE37E29004B8760 /* AFURLResponseSerialization.m */; };
+		897B46D81CE37E29004B8760 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46CF1CE37E29004B8760 /* AFURLSessionManager.m */; };
+		897B46DA1CE37E6B004B8760 /* DrawingBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B46D91CE37E6B004B8760 /* DrawingBase.swift */; };
+		897B46DC1CE37F0E004B8760 /* SchedulingServerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B46DB1CE37F0E004B8760 /* SchedulingServerManager.swift */; };
+		897B46DE1CE38106004B8760 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 897B46DD1CE38106004B8760 /* CFNetwork.framework */; };
+		897B46E01CE3810C004B8760 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 897B46DF1CE3810C004B8760 /* UIKit.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		897B46991CE37D6D004B8760 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 897B467C1CE37D6D004B8760 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 897B46831CE37D6D004B8760;
+			remoteInfo = Hayate;
+		};
+		897B46A41CE37D6D004B8760 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 897B467C1CE37D6D004B8760 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 897B46831CE37D6D004B8760;
+			remoteInfo = Hayate;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		892749E11CEB33EE006B311C /* HayateHttpManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HayateHttpManager.swift; path = NetWorking/HayateHttpManager.swift; sourceTree = "<group>"; };
+		892749E61CEB55BA006B311C /* HayateGlobal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HayateGlobal.swift; path = Global/HayateGlobal.swift; sourceTree = "<group>"; };
+		892749EE1CEB55F2006B311C /* SSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSKeychain.h; sourceTree = "<group>"; };
+		892749EF1CEB55F2006B311C /* SSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSKeychain.m; sourceTree = "<group>"; };
+		897B46841CE37D6D004B8760 /* Hayate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hayate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		897B46871CE37D6D004B8760 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		897B46891CE37D6D004B8760 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		897B468C1CE37D6D004B8760 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		897B468E1CE37D6D004B8760 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		897B46911CE37D6D004B8760 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		897B46931CE37D6D004B8760 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		897B46981CE37D6D004B8760 /* HayateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HayateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		897B469C1CE37D6D004B8760 /* HayateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HayateTests.swift; sourceTree = "<group>"; };
+		897B469E1CE37D6D004B8760 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		897B46A31CE37D6D004B8760 /* HayateUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HayateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		897B46A71CE37D6D004B8760 /* HayateUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HayateUITests.swift; sourceTree = "<group>"; };
+		897B46A91CE37D6D004B8760 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		897B46B51CE37D83004B8760 /* Hayate-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Hayate-Bridging-Header.h"; sourceTree = "<group>"; };
+		897B46BD1CE37E29004B8760 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
+		897B46BE1CE37E29004B8760 /* AFHTTPRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPRequestOperation.m; sourceTree = "<group>"; };
+		897B46BF1CE37E29004B8760 /* AFHTTPRequestOperationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperationManager.h; sourceTree = "<group>"; };
+		897B46C01CE37E29004B8760 /* AFHTTPRequestOperationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPRequestOperationManager.m; sourceTree = "<group>"; };
+		897B46C11CE37E29004B8760 /* AFHTTPSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPSessionManager.h; sourceTree = "<group>"; };
+		897B46C21CE37E29004B8760 /* AFHTTPSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPSessionManager.m; sourceTree = "<group>"; };
+		897B46C31CE37E29004B8760 /* AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworking.h; sourceTree = "<group>"; };
+		897B46C41CE37E29004B8760 /* AFNetworkReachabilityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkReachabilityManager.h; sourceTree = "<group>"; };
+		897B46C51CE37E29004B8760 /* AFNetworkReachabilityManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFNetworkReachabilityManager.m; sourceTree = "<group>"; };
+		897B46C61CE37E29004B8760 /* AFSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFSecurityPolicy.h; sourceTree = "<group>"; };
+		897B46C71CE37E29004B8760 /* AFSecurityPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFSecurityPolicy.m; sourceTree = "<group>"; };
+		897B46C81CE37E29004B8760 /* AFURLConnectionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLConnectionOperation.h; sourceTree = "<group>"; };
+		897B46C91CE37E29004B8760 /* AFURLConnectionOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLConnectionOperation.m; sourceTree = "<group>"; };
+		897B46CA1CE37E29004B8760 /* AFURLRequestSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLRequestSerialization.h; sourceTree = "<group>"; };
+		897B46CB1CE37E29004B8760 /* AFURLRequestSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLRequestSerialization.m; sourceTree = "<group>"; };
+		897B46CC1CE37E29004B8760 /* AFURLResponseSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLResponseSerialization.h; sourceTree = "<group>"; };
+		897B46CD1CE37E29004B8760 /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLResponseSerialization.m; sourceTree = "<group>"; };
+		897B46CE1CE37E29004B8760 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLSessionManager.h; sourceTree = "<group>"; };
+		897B46CF1CE37E29004B8760 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManager.m; sourceTree = "<group>"; };
+		897B46D91CE37E6B004B8760 /* DrawingBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DrawingBase.swift; path = Drawing/DrawingBase.swift; sourceTree = "<group>"; };
+		897B46DB1CE37F0E004B8760 /* SchedulingServerManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SchedulingServerManager.swift; path = NetWorking/SchedulingServerManager.swift; sourceTree = "<group>"; };
+		897B46DD1CE38106004B8760 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		897B46DF1CE3810C004B8760 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		897B46811CE37D6D004B8760 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				897B46E01CE3810C004B8760 /* UIKit.framework in Frameworks */,
+				897B46DE1CE38106004B8760 /* CFNetwork.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		897B46951CE37D6D004B8760 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		897B46A01CE37D6D004B8760 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		892749E31CEB47D0006B311C /* Global */ = {
+			isa = PBXGroup;
+			children = (
+				892749E61CEB55BA006B311C /* HayateGlobal.swift */,
+			);
+			name = Global;
+			sourceTree = "<group>";
+		};
+		892749ED1CEB55F2006B311C /* SSKeychain */ = {
+			isa = PBXGroup;
+			children = (
+				892749EE1CEB55F2006B311C /* SSKeychain.h */,
+				892749EF1CEB55F2006B311C /* SSKeychain.m */,
+			);
+			name = SSKeychain;
+			path = Library/SSKeychain;
+			sourceTree = "<group>";
+		};
+		897B467B1CE37D6D004B8760 = {
+			isa = PBXGroup;
+			children = (
+				897B46DF1CE3810C004B8760 /* UIKit.framework */,
+				897B46DD1CE38106004B8760 /* CFNetwork.framework */,
+				897B46861CE37D6D004B8760 /* Hayate */,
+				897B469B1CE37D6D004B8760 /* HayateTests */,
+				897B46A61CE37D6D004B8760 /* HayateUITests */,
+				897B46851CE37D6D004B8760 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		897B46851CE37D6D004B8760 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				897B46841CE37D6D004B8760 /* Hayate.app */,
+				897B46981CE37D6D004B8760 /* HayateTests.xctest */,
+				897B46A31CE37D6D004B8760 /* HayateUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		897B46861CE37D6D004B8760 /* Hayate */ = {
+			isa = PBXGroup;
+			children = (
+				892749E31CEB47D0006B311C /* Global */,
+				897B46BB1CE37DF8004B8760 /* Networking */,
+				897B46BA1CE37DF3004B8760 /* Drawing */,
+				897B46B91CE37DEC004B8760 /* Library */,
+				897B46871CE37D6D004B8760 /* AppDelegate.swift */,
+				897B46891CE37D6D004B8760 /* ViewController.swift */,
+				897B468B1CE37D6D004B8760 /* Main.storyboard */,
+				897B468E1CE37D6D004B8760 /* Assets.xcassets */,
+				897B46901CE37D6D004B8760 /* LaunchScreen.storyboard */,
+				897B46931CE37D6D004B8760 /* Info.plist */,
+				897B46B51CE37D83004B8760 /* Hayate-Bridging-Header.h */,
+			);
+			path = Hayate;
+			sourceTree = "<group>";
+		};
+		897B469B1CE37D6D004B8760 /* HayateTests */ = {
+			isa = PBXGroup;
+			children = (
+				897B469C1CE37D6D004B8760 /* HayateTests.swift */,
+				897B469E1CE37D6D004B8760 /* Info.plist */,
+			);
+			path = HayateTests;
+			sourceTree = "<group>";
+		};
+		897B46A61CE37D6D004B8760 /* HayateUITests */ = {
+			isa = PBXGroup;
+			children = (
+				897B46A71CE37D6D004B8760 /* HayateUITests.swift */,
+				897B46A91CE37D6D004B8760 /* Info.plist */,
+			);
+			path = HayateUITests;
+			sourceTree = "<group>";
+		};
+		897B46B91CE37DEC004B8760 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				892749ED1CEB55F2006B311C /* SSKeychain */,
+				897B46BC1CE37E29004B8760 /* AFNetworking */,
+			);
+			name = Library;
+			sourceTree = "<group>";
+		};
+		897B46BA1CE37DF3004B8760 /* Drawing */ = {
+			isa = PBXGroup;
+			children = (
+				897B46D91CE37E6B004B8760 /* DrawingBase.swift */,
+			);
+			name = Drawing;
+			sourceTree = "<group>";
+		};
+		897B46BB1CE37DF8004B8760 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				897B46DB1CE37F0E004B8760 /* SchedulingServerManager.swift */,
+				892749E11CEB33EE006B311C /* HayateHttpManager.swift */,
+			);
+			name = Networking;
+			sourceTree = "<group>";
+		};
+		897B46BC1CE37E29004B8760 /* AFNetworking */ = {
+			isa = PBXGroup;
+			children = (
+				897B46BD1CE37E29004B8760 /* AFHTTPRequestOperation.h */,
+				897B46BE1CE37E29004B8760 /* AFHTTPRequestOperation.m */,
+				897B46BF1CE37E29004B8760 /* AFHTTPRequestOperationManager.h */,
+				897B46C01CE37E29004B8760 /* AFHTTPRequestOperationManager.m */,
+				897B46C11CE37E29004B8760 /* AFHTTPSessionManager.h */,
+				897B46C21CE37E29004B8760 /* AFHTTPSessionManager.m */,
+				897B46C31CE37E29004B8760 /* AFNetworking.h */,
+				897B46C41CE37E29004B8760 /* AFNetworkReachabilityManager.h */,
+				897B46C51CE37E29004B8760 /* AFNetworkReachabilityManager.m */,
+				897B46C61CE37E29004B8760 /* AFSecurityPolicy.h */,
+				897B46C71CE37E29004B8760 /* AFSecurityPolicy.m */,
+				897B46C81CE37E29004B8760 /* AFURLConnectionOperation.h */,
+				897B46C91CE37E29004B8760 /* AFURLConnectionOperation.m */,
+				897B46CA1CE37E29004B8760 /* AFURLRequestSerialization.h */,
+				897B46CB1CE37E29004B8760 /* AFURLRequestSerialization.m */,
+				897B46CC1CE37E29004B8760 /* AFURLResponseSerialization.h */,
+				897B46CD1CE37E29004B8760 /* AFURLResponseSerialization.m */,
+				897B46CE1CE37E29004B8760 /* AFURLSessionManager.h */,
+				897B46CF1CE37E29004B8760 /* AFURLSessionManager.m */,
+			);
+			name = AFNetworking;
+			path = Library/AFNetworking;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		897B46831CE37D6D004B8760 /* Hayate */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 897B46AC1CE37D6D004B8760 /* Build configuration list for PBXNativeTarget "Hayate" */;
+			buildPhases = (
+				897B46801CE37D6D004B8760 /* Sources */,
+				897B46811CE37D6D004B8760 /* Frameworks */,
+				897B46821CE37D6D004B8760 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Hayate;
+			productName = Hayate;
+			productReference = 897B46841CE37D6D004B8760 /* Hayate.app */;
+			productType = "com.apple.product-type.application";
+		};
+		897B46971CE37D6D004B8760 /* HayateTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 897B46AF1CE37D6D004B8760 /* Build configuration list for PBXNativeTarget "HayateTests" */;
+			buildPhases = (
+				897B46941CE37D6D004B8760 /* Sources */,
+				897B46951CE37D6D004B8760 /* Frameworks */,
+				897B46961CE37D6D004B8760 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				897B469A1CE37D6D004B8760 /* PBXTargetDependency */,
+			);
+			name = HayateTests;
+			productName = HayateTests;
+			productReference = 897B46981CE37D6D004B8760 /* HayateTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		897B46A21CE37D6D004B8760 /* HayateUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 897B46B21CE37D6D004B8760 /* Build configuration list for PBXNativeTarget "HayateUITests" */;
+			buildPhases = (
+				897B469F1CE37D6D004B8760 /* Sources */,
+				897B46A01CE37D6D004B8760 /* Frameworks */,
+				897B46A11CE37D6D004B8760 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				897B46A51CE37D6D004B8760 /* PBXTargetDependency */,
+			);
+			name = HayateUITests;
+			productName = HayateUITests;
+			productReference = 897B46A31CE37D6D004B8760 /* HayateUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		897B467C1CE37D6D004B8760 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = Duanwwu;
+				TargetAttributes = {
+					897B46831CE37D6D004B8760 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					897B46971CE37D6D004B8760 = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 897B46831CE37D6D004B8760;
+					};
+					897B46A21CE37D6D004B8760 = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 897B46831CE37D6D004B8760;
+					};
+				};
+			};
+			buildConfigurationList = 897B467F1CE37D6D004B8760 /* Build configuration list for PBXProject "Hayate" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 897B467B1CE37D6D004B8760;
+			productRefGroup = 897B46851CE37D6D004B8760 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				897B46831CE37D6D004B8760 /* Hayate */,
+				897B46971CE37D6D004B8760 /* HayateTests */,
+				897B46A21CE37D6D004B8760 /* HayateUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		897B46821CE37D6D004B8760 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				897B46921CE37D6D004B8760 /* LaunchScreen.storyboard in Resources */,
+				897B468F1CE37D6D004B8760 /* Assets.xcassets in Resources */,
+				897B468D1CE37D6D004B8760 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		897B46961CE37D6D004B8760 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		897B46A11CE37D6D004B8760 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		897B46801CE37D6D004B8760 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				897B46D61CE37E29004B8760 /* AFURLRequestSerialization.m in Sources */,
+				897B46D51CE37E29004B8760 /* AFURLConnectionOperation.m in Sources */,
+				897B46D41CE37E29004B8760 /* AFSecurityPolicy.m in Sources */,
+				892749E71CEB55BA006B311C /* HayateGlobal.swift in Sources */,
+				897B46D01CE37E29004B8760 /* AFHTTPRequestOperation.m in Sources */,
+				897B46DA1CE37E6B004B8760 /* DrawingBase.swift in Sources */,
+				897B46D81CE37E29004B8760 /* AFURLSessionManager.m in Sources */,
+				897B46D71CE37E29004B8760 /* AFURLResponseSerialization.m in Sources */,
+				897B468A1CE37D6D004B8760 /* ViewController.swift in Sources */,
+				892749F01CEB55F2006B311C /* SSKeychain.m in Sources */,
+				897B46DC1CE37F0E004B8760 /* SchedulingServerManager.swift in Sources */,
+				892749E21CEB33EE006B311C /* HayateHttpManager.swift in Sources */,
+				897B46D21CE37E29004B8760 /* AFHTTPSessionManager.m in Sources */,
+				897B46D11CE37E29004B8760 /* AFHTTPRequestOperationManager.m in Sources */,
+				897B46D31CE37E29004B8760 /* AFNetworkReachabilityManager.m in Sources */,
+				897B46881CE37D6D004B8760 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		897B46941CE37D6D004B8760 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				897B469D1CE37D6D004B8760 /* HayateTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		897B469F1CE37D6D004B8760 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				897B46A81CE37D6D004B8760 /* HayateUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		897B469A1CE37D6D004B8760 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 897B46831CE37D6D004B8760 /* Hayate */;
+			targetProxy = 897B46991CE37D6D004B8760 /* PBXContainerItemProxy */;
+		};
+		897B46A51CE37D6D004B8760 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 897B46831CE37D6D004B8760 /* Hayate */;
+			targetProxy = 897B46A41CE37D6D004B8760 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		897B468B1CE37D6D004B8760 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				897B468C1CE37D6D004B8760 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		897B46901CE37D6D004B8760 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				897B46911CE37D6D004B8760 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		897B46AA1CE37D6D004B8760 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		897B46AB1CE37D6D004B8760 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		897B46AD1CE37D6D004B8760 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = Hayate/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.duan.Hayate;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Hayate/Hayate-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		897B46AE1CE37D6D004B8760 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = Hayate/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.duan.Hayate;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Hayate/Hayate-Bridging-Header.h";
+			};
+			name = Release;
+		};
+		897B46B01CE37D6D004B8760 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = HayateTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.duan.HayateTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hayate.app/Hayate";
+			};
+			name = Debug;
+		};
+		897B46B11CE37D6D004B8760 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = HayateTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.duan.HayateTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hayate.app/Hayate";
+			};
+			name = Release;
+		};
+		897B46B31CE37D6D004B8760 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = HayateUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.duan.HayateUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Hayate;
+			};
+			name = Debug;
+		};
+		897B46B41CE37D6D004B8760 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = HayateUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.duan.HayateUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Hayate;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		897B467F1CE37D6D004B8760 /* Build configuration list for PBXProject "Hayate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				897B46AA1CE37D6D004B8760 /* Debug */,
+				897B46AB1CE37D6D004B8760 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		897B46AC1CE37D6D004B8760 /* Build configuration list for PBXNativeTarget "Hayate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				897B46AD1CE37D6D004B8760 /* Debug */,
+				897B46AE1CE37D6D004B8760 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		897B46AF1CE37D6D004B8760 /* Build configuration list for PBXNativeTarget "HayateTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				897B46B01CE37D6D004B8760 /* Debug */,
+				897B46B11CE37D6D004B8760 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		897B46B21CE37D6D004B8760 /* Build configuration list for PBXNativeTarget "HayateUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				897B46B31CE37D6D004B8760 /* Debug */,
+				897B46B41CE37D6D004B8760 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 897B467C1CE37D6D004B8760 /* Project object */;
+}
