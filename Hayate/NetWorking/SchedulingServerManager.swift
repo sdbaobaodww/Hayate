@@ -11,17 +11,13 @@ import UIKit
 class SchedulingServerManager : NSObject{
     
     class var sharedInstance :SchedulingServerManager {
-        
         struct Static {
             static var onceToken:dispatch_once_t = 0
             static var instance:SchedulingServerManager? = nil
         }
-        
         dispatch_once(&Static.onceToken, { () -> Void in
-            
             Static.instance = SchedulingServerManager()
         })
-        
         return Static.instance!
     }
     
@@ -42,5 +38,21 @@ class SchedulingServerManager : NSObject{
             
             print("receive failed")
         })
+        
+        HayateHttpManager.sharedInstance.GET("http://www.baidu.com", body: nil, succeed: { (task, data) in
+            
+                print("receive succeed")
+            
+            }, failed: { (task, error) in
+                
+                print("receive failed")
+        })
+        
+        let request = NSMutableURLRequest(URL: NSURL(string: url)!)
+        request.HTTPMethod = "POST"
+        request.HTTPBody = package1000.serialize()
+        NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
+            print("receive")
+        }.resume()
     }
 }

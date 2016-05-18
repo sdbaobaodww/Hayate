@@ -21,23 +21,23 @@ class HayateGlobal: NSObject {
     class func deviceId() -> NSString{
         let svc = String(stringInterpolation: "\(KeyChainAccessGroup).\(DeviceIDKey)");
         let act = "com.gw"
-        var deviceId : NSString = SSKeychain.passwordForService(svc, account: act)
-        if deviceId.length == 0 {
-            deviceId = String(self.userConfig()[DeviceIDKey])
-            if deviceId.length > 0 {
-                SSKeychain.setPassword(deviceId as String, forService: svc, account: act)
+        var deviceId : NSString? = SSKeychain.passwordForService(svc, account: act)
+        if deviceId == nil {//首先从keychain中获取
+            if let str = self.userConfig()[DeviceIDKey] {
+                deviceId = str as? NSString
+                SSKeychain.setPassword(deviceId as String!, forService: svc, account: act)
             }
         }
-        if deviceId.length == 0 {
+        if deviceId == nil {
             deviceId = self.generateChannelNumber();
             do{
-                try SSKeychain.setPassword(deviceId as String, forService: svc, account: act, error: ())
+                try SSKeychain.setPassword(deviceId as String!, forService: svc, account: act, error: ())
             }catch let error as NSError?{
-                self.saveUserConfig(DeviceIDKey, value: deviceId as String)
+                self.saveUserConfig(DeviceIDKey, value: deviceId as String!)
                 print("设置ChannelNo错误Code:\(error!.code):\(error!.localizedDescription)")
             }
         }
-        return deviceId
+        return deviceId!
     }
     
     class func uuidString() -> NSString {
@@ -56,7 +56,6 @@ class HayateGlobal: NSObject {
         var nRand : UInt32	= 0;
         // 随机生成填补位数
         for _ in 0 ..< nLen {
-            
             nRand = arc4random() % 10
             retVal = retVal.stringByAppendingString(String(stringInterpolation: "\(nRand)"))
         }
@@ -65,23 +64,17 @@ class HayateGlobal: NSObject {
     }
     
     class func userConfig() -> NSDictionary{
-        
         struct Static {
             static var onceToken:dispatch_once_t = 0
             static var config:Dictionary<String,AnyObject>? = nil
         }
-        
         dispatch_once(&Static.onceToken, { () -> Void in
-            
             if let dic = self .userPreferenceConfigDic() {
-                
                 Static.config = dic as? Dictionary<String, AnyObject>
             } else {
-                
                 Static.config = Dictionary()
             }
         })
-        
         return Static.config!
     }
     

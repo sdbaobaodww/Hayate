@@ -24,6 +24,7 @@
 		4F4D60F01CEC70750050FD75 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46CB1CE37E29004B8760 /* AFURLRequestSerialization.m */; };
 		4F4D60F11CEC70750050FD75 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46CD1CE37E29004B8760 /* AFURLResponseSerialization.m */; };
 		4F4D60F21CEC70750050FD75 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46CF1CE37E29004B8760 /* AFURLSessionManager.m */; };
+		891AD8D11CEC937100FD0364 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 891AD8D01CEC937100FD0364 /* Security.framework */; };
 		892749E21CEB33EE006B311C /* HayateHttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892749E11CEB33EE006B311C /* HayateHttpManager.swift */; };
 		892749E71CEB55BA006B311C /* HayateGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892749E61CEB55BA006B311C /* HayateGlobal.swift */; };
 		892749F01CEB55F2006B311C /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 892749EF1CEB55F2006B311C /* SSKeychain.m */; };
@@ -69,6 +70,7 @@
 /* Begin PBXFileReference section */
 		4F4D60E01CEC17670050FD75 /* HayateExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HayateExtension.swift; path = Global/HayateExtension.swift; sourceTree = "<group>"; };
 		4F4D60E21CEC43850050FD75 /* NetworkingDataModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetworkingDataModel.swift; path = NetWorking/NetworkingDataModel.swift; sourceTree = "<group>"; };
+		891AD8D01CEC937100FD0364 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		892749E11CEB33EE006B311C /* HayateHttpManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HayateHttpManager.swift; path = NetWorking/HayateHttpManager.swift; sourceTree = "<group>"; };
 		892749E61CEB55BA006B311C /* HayateGlobal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HayateGlobal.swift; path = Global/HayateGlobal.swift; sourceTree = "<group>"; };
 		892749EE1CEB55F2006B311C /* SSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSKeychain.h; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				891AD8D11CEC937100FD0364 /* Security.framework in Frameworks */,
 				897B46E01CE3810C004B8760 /* UIKit.framework in Frameworks */,
 				897B46DE1CE38106004B8760 /* CFNetwork.framework in Frameworks */,
 			);
@@ -161,6 +164,7 @@
 		897B467B1CE37D6D004B8760 = {
 			isa = PBXGroup;
 			children = (
+				891AD8D01CEC937100FD0364 /* Security.framework */,
 				897B46DF1CE3810C004B8760 /* UIKit.framework */,
 				897B46DD1CE38106004B8760 /* CFNetwork.framework */,
 				897B46861CE37D6D004B8760 /* Hayate */,
