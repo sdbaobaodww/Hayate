@@ -7,7 +7,6 @@
 //
 
 import XCTest
-@testable import Hayate
 
 class HayateTests: XCTestCase {
     

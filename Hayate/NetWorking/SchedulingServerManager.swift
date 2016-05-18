@@ -25,35 +25,22 @@ class SchedulingServerManager : NSObject{
         return Static.instance!
     }
     
-    
-    func requestMarketAddress() -> Void {
-        
+    func requestMarketAddress() {
         let addresses : Array = HayateGlobal.SchedulingServerAddress;
         let count : Int = addresses.count
         srandom(UInt32(time(nil)))            // 种子,random对应的是srandom
         let index : Int = random() % count
-        var address : (String,ushort) = addresses[index]
+        let address : (String,ushort) = addresses[index]
+        let url = String(stringInterpolation: "http://\(address.0):\(address.1)")
+        let package1000 = DZHRequestPakage1000()
         
-        
-        var reqParmData : NSData = NSData()
-        let tag : CChar = CChar("{")!
-        let type : ushort = 1000
-        let attrs : Int16 = 0
-        let len : ushort = ushort(reqParmData.length);
-        
-        NSMutableData *reqParmData = [NSMutableData data];
-        NSData *reqPostData     = [reqData objectForKey:kReqNSData];
-        char tag                = '{';
-        unsigned short type     = DZH_MREQ_INITLOGIN;
-        short attrs             = 0;
-        unsigned short len      = [reqPostData length];
-        [reqParmData appendBytes:&tag length:sizeof(tag)];
-        [reqParmData appendBytes:&type length:sizeof(type)];
-        [reqParmData appendBytes:&attrs length:sizeof(attrs)];
-        [reqParmData appendBytes:&len length:sizeof(len)];
-        if (len > 0) [reqParmData appendData:reqPostData];
-        
-        return reqParmData;
+        HayateHttpManager.sharedInstance.POST(url, body: package1000.serialize(), succeed: { (task, data) in
+            
+            print("receive succeed")
+            
+        }, failed: { (task, error) in
+            
+            print("receive failed")
+        })
     }
-
 }

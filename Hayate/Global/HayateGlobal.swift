@@ -10,35 +10,34 @@ import Foundation
 
 class HayateGlobal: NSObject {
     
-    static var SchedulingServerAddress : [(String,ushort)] = [("222.73.34.8",12346),("222.73.103.42",12346),("61.151.252.4",12346),("61.151.252.14",12346)];
-    
-    static var ChannelNo = "213"
-    static var TerminalId = "iphone"
-    static var PlatformId = "14"
-    static var keyChainAccessGroup = "59B8QAXTFE.com.gw.dzhiphone622";
-    static var kDeviceIDKey = "DeviceID"
+    static let SchedulingServerAddress: [(String,ushort)] = [("222.73.34.8",12346),("222.73.103.42",12346),("61.151.252.4",12346),("61.151.252.14",12346)];
+    static let VersionNumber: NSString = "8.35"
+    static let ChannelNo: NSString = "213"
+    static let TerminalId: NSString = "iphone"
+    static let PlatformId: NSString = "14"
+    static let KeyChainAccessGroup: NSString = "59B8QAXTFE.com.gw.dzhiphone622";
+    static let DeviceIDKey: NSString = "DeviceID"
     
     class func deviceId() -> NSString{
-        
-        let svc = String(stringInterpolation: "\(keyChainAccessGroup).\(kDeviceIDKey)");
+        let svc = String(stringInterpolation: "\(KeyChainAccessGroup).\(DeviceIDKey)");
         let act = "com.gw"
         var deviceId : NSString = SSKeychain.passwordForService(svc, account: act)
         if deviceId.length == 0 {
-            deviceId = String(self.userConfig()[kDeviceIDKey])
+            deviceId = String(self.userConfig()[DeviceIDKey])
             if deviceId.length > 0 {
                 SSKeychain.setPassword(deviceId as String, forService: svc, account: act)
             }
         }
-        
         if deviceId.length == 0 {
             deviceId = self.generateChannelNumber();
-            var error: NSError?
-            SSKeychain.setPassword(deviceId as String, forService: svc, account: act, error: err)
-            if let error = error {
-                self.saveUserConfig(kDeviceIDKey, value: deviceId as String)
-                print("设置ChannelNo错误Code:\(error.code):\(error.localizedDescription)")
+            do{
+                try SSKeychain.setPassword(deviceId as String, forService: svc, account: act, error: ())
+            }catch let error as NSError?{
+                self.saveUserConfig(DeviceIDKey, value: deviceId as String)
+                print("设置ChannelNo错误Code:\(error!.code):\(error!.localizedDescription)")
             }
         }
+        return deviceId
     }
     
     class func uuidString() -> NSString {
@@ -86,13 +85,12 @@ class HayateGlobal: NSObject {
         return Static.config!
     }
     
-    class func saveUserConfig(key:String, value:String){
-        self.userConfig().setValue(value, forKey: key)
+    class func saveUserConfig(key:NSString, value:NSString){
+        self.userConfig().setValue(value, forKey: key as String)
         self.userConfig().writeToFile(self.documentFilePath("user.plist"), atomically: true)
     }
     
     class func userPreferenceConfigDic() -> NSDictionary? {
-    
         let dataPath = self.documentFilePath("user.plist")
         return NSDictionary(contentsOfFile:dataPath)
     }

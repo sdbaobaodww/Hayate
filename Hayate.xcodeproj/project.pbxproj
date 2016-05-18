@@ -7,6 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F4D60E11CEC17670050FD75 /* HayateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4D60E01CEC17670050FD75 /* HayateExtension.swift */; };
+		4F4D60E31CEC43850050FD75 /* NetworkingDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4D60E21CEC43850050FD75 /* NetworkingDataModel.swift */; };
+		4F4D60E41CEC70270050FD75 /* SchedulingServerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B46DB1CE37F0E004B8760 /* SchedulingServerManager.swift */; };
+		4F4D60E51CEC702D0050FD75 /* HayateGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892749E61CEB55BA006B311C /* HayateGlobal.swift */; };
+		4F4D60E61CEC70300050FD75 /* HayateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4D60E01CEC17670050FD75 /* HayateExtension.swift */; };
+		4F4D60E71CEC70330050FD75 /* HayateHttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892749E11CEB33EE006B311C /* HayateHttpManager.swift */; };
+		4F4D60E81CEC70360050FD75 /* NetworkingDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4D60E21CEC43850050FD75 /* NetworkingDataModel.swift */; };
+		4F4D60E91CEC70670050FD75 /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 892749EF1CEB55F2006B311C /* SSKeychain.m */; };
+		4F4D60EA1CEC70750050FD75 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46BE1CE37E29004B8760 /* AFHTTPRequestOperation.m */; };
+		4F4D60EB1CEC70750050FD75 /* AFHTTPRequestOperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46C01CE37E29004B8760 /* AFHTTPRequestOperationManager.m */; };
+		4F4D60EC1CEC70750050FD75 /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46C21CE37E29004B8760 /* AFHTTPSessionManager.m */; };
+		4F4D60ED1CEC70750050FD75 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46C51CE37E29004B8760 /* AFNetworkReachabilityManager.m */; };
+		4F4D60EE1CEC70750050FD75 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46C71CE37E29004B8760 /* AFSecurityPolicy.m */; };
+		4F4D60EF1CEC70750050FD75 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46C91CE37E29004B8760 /* AFURLConnectionOperation.m */; };
+		4F4D60F01CEC70750050FD75 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46CB1CE37E29004B8760 /* AFURLRequestSerialization.m */; };
+		4F4D60F11CEC70750050FD75 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46CD1CE37E29004B8760 /* AFURLResponseSerialization.m */; };
+		4F4D60F21CEC70750050FD75 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 897B46CF1CE37E29004B8760 /* AFURLSessionManager.m */; };
 		892749E21CEB33EE006B311C /* HayateHttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892749E11CEB33EE006B311C /* HayateHttpManager.swift */; };
 		892749E71CEB55BA006B311C /* HayateGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892749E61CEB55BA006B311C /* HayateGlobal.swift */; };
 		892749F01CEB55F2006B311C /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 892749EF1CEB55F2006B311C /* SSKeychain.m */; };
@@ -50,6 +67,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4F4D60E01CEC17670050FD75 /* HayateExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HayateExtension.swift; path = Global/HayateExtension.swift; sourceTree = "<group>"; };
+		4F4D60E21CEC43850050FD75 /* NetworkingDataModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NetworkingDataModel.swift; path = NetWorking/NetworkingDataModel.swift; sourceTree = "<group>"; };
 		892749E11CEB33EE006B311C /* HayateHttpManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HayateHttpManager.swift; path = NetWorking/HayateHttpManager.swift; sourceTree = "<group>"; };
 		892749E61CEB55BA006B311C /* HayateGlobal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HayateGlobal.swift; path = Global/HayateGlobal.swift; sourceTree = "<group>"; };
 		892749EE1CEB55F2006B311C /* SSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSKeychain.h; sourceTree = "<group>"; };
@@ -124,6 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				892749E61CEB55BA006B311C /* HayateGlobal.swift */,
+				4F4D60E01CEC17670050FD75 /* HayateExtension.swift */,
 			);
 			name = Global;
 			sourceTree = "<group>";
@@ -218,6 +238,7 @@
 			children = (
 				897B46DB1CE37F0E004B8760 /* SchedulingServerManager.swift */,
 				892749E11CEB33EE006B311C /* HayateHttpManager.swift */,
+				4F4D60E21CEC43850050FD75 /* NetworkingDataModel.swift */,
 			);
 			name = Networking;
 			sourceTree = "<group>";
@@ -387,6 +408,7 @@
 				897B46D01CE37E29004B8760 /* AFHTTPRequestOperation.m in Sources */,
 				897B46DA1CE37E6B004B8760 /* DrawingBase.swift in Sources */,
 				897B46D81CE37E29004B8760 /* AFURLSessionManager.m in Sources */,
+				4F4D60E11CEC17670050FD75 /* HayateExtension.swift in Sources */,
 				897B46D71CE37E29004B8760 /* AFURLResponseSerialization.m in Sources */,
 				897B468A1CE37D6D004B8760 /* ViewController.swift in Sources */,
 				892749F01CEB55F2006B311C /* SSKeychain.m in Sources */,
@@ -394,6 +416,7 @@
 				892749E21CEB33EE006B311C /* HayateHttpManager.swift in Sources */,
 				897B46D21CE37E29004B8760 /* AFHTTPSessionManager.m in Sources */,
 				897B46D11CE37E29004B8760 /* AFHTTPRequestOperationManager.m in Sources */,
+				4F4D60E31CEC43850050FD75 /* NetworkingDataModel.swift in Sources */,
 				897B46D31CE37E29004B8760 /* AFNetworkReachabilityManager.m in Sources */,
 				897B46881CE37D6D004B8760 /* AppDelegate.swift in Sources */,
 			);
@@ -403,6 +426,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F4D60EA1CEC70750050FD75 /* AFHTTPRequestOperation.m in Sources */,
+				4F4D60EB1CEC70750050FD75 /* AFHTTPRequestOperationManager.m in Sources */,
+				4F4D60EC1CEC70750050FD75 /* AFHTTPSessionManager.m in Sources */,
+				4F4D60ED1CEC70750050FD75 /* AFNetworkReachabilityManager.m in Sources */,
+				4F4D60EE1CEC70750050FD75 /* AFSecurityPolicy.m in Sources */,
+				4F4D60EF1CEC70750050FD75 /* AFURLConnectionOperation.m in Sources */,
+				4F4D60F01CEC70750050FD75 /* AFURLRequestSerialization.m in Sources */,
+				4F4D60F11CEC70750050FD75 /* AFURLResponseSerialization.m in Sources */,
+				4F4D60F21CEC70750050FD75 /* AFURLSessionManager.m in Sources */,
+				4F4D60E91CEC70670050FD75 /* SSKeychain.m in Sources */,
+				4F4D60E81CEC70360050FD75 /* NetworkingDataModel.swift in Sources */,
+				4F4D60E71CEC70330050FD75 /* HayateHttpManager.swift in Sources */,
+				4F4D60E61CEC70300050FD75 /* HayateExtension.swift in Sources */,
+				4F4D60E51CEC702D0050FD75 /* HayateGlobal.swift in Sources */,
+				4F4D60E41CEC70270050FD75 /* SchedulingServerManager.swift in Sources */,
 				897B469D1CE37D6D004B8760 /* HayateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -540,6 +578,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Hayate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.duan.Hayate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Hayate/Hayate-Bridging-Header.h";
@@ -554,6 +593,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = Hayate/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.duan.Hayate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Hayate/Hayate-Bridging-Header.h";

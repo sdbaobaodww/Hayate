@@ -16,25 +16,25 @@ class HayateHttpManager: NSObject {
  
     var httpManager:AFHTTPSessionManager
     
-    class var sharedInstance :SchedulingServerManager {
+    class var sharedInstance :HayateHttpManager {
         
         struct Static {
             static var onceToken:dispatch_once_t = 0
-            static var instance:SchedulingServerManager? = nil
+            static var instance:HayateHttpManager? = nil
         }
         
         dispatch_once(&Static.onceToken, { () -> Void in
             
-            Static.instance = SchedulingServerManager()
+            Static.instance = HayateHttpManager()
         })
         
         return Static.instance!
     }
     
     override init(){
-        
-        httpManager = AFHTTPSessionManager(baseURL: nil);
-        super.init();
+        let sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration()
+        sessionConfig.timeoutIntervalForResource = 10
+        httpManager = AFHTTPSessionManager(baseURL: nil, sessionConfiguration: sessionConfig);
     }
     
     //普通post网络请求
