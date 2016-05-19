@@ -8,7 +8,7 @@
 
 import Foundation
 
-class HayateGlobal: NSObject {
+public class HayateGlobal: NSObject {
     
     static let SchedulingServerAddress: [(String,ushort)] = [("222.73.34.8",12346),("222.73.103.42",12346),("61.151.252.4",12346),("61.151.252.14",12346)];
     static let VersionNumber: NSString = "8.35"

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SchedulingServerManager : NSObject{
+public class SchedulingServerManager : NSObject{
     
     class var sharedInstance :SchedulingServerManager {
         struct Static {
@@ -28,31 +28,12 @@ class SchedulingServerManager : NSObject{
         let index : Int = random() % count
         let address : (String,ushort) = addresses[index]
         let url = String(stringInterpolation: "http://\(address.0):\(address.1)")
-        let package1000 = DZHRequestPakage1000()
+        let package1000 = DZHRequestPackage1000()
         
-        HayateHttpManager.sharedInstance.POST(url, body: package1000.serialize(), succeed: { (task, data) in
-            
-            print("receive succeed")
-            
-        }, failed: { (task, error) in
-            
-            print("receive failed")
-        })
-        
-        HayateHttpManager.sharedInstance.GET("http://www.baidu.com", body: nil, succeed: { (task, data) in
-            
+        HayateHttpManager.sharedInstance.POSTStream(url, body: package1000.serialize(), succeed: { (data) in
                 print("receive succeed")
-            
-            }, failed: { (task, error) in
-                
+            }, failed:{ (error) in
                 print("receive failed")
         })
-        
-        let request = NSMutableURLRequest(URL: NSURL(string: url)!)
-        request.HTTPMethod = "POST"
-        request.HTTPBody = package1000.serialize()
-        NSURLSession.sharedSession().dataTaskWithRequest(request) { (data, response, error) in
-            print("receive")
-        }.resume()
     }
 }
