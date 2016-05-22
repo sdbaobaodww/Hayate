@@ -52,7 +52,7 @@ protocol HayateSerialize {
 }
 
 protocol HayateDeSerialize {
-    func deSerialize(data: NSData?)
+    func deSerialize(body: NSData?)
 }
 
 public class DZHRequestPackage: NSObject,HayateSerialize {
@@ -80,8 +80,7 @@ public class DZHRequestPackage: NSObject,HayateSerialize {
 public class DZHResponseDataParser: NSObject,HayateDeSerialize {
     var header: DZH_DATAHEAD_EX?
     
-    func deSerialize(data: NSData?) {
-        
+    func deSerialize(body: NSData?) {
         
     }
 }
@@ -121,5 +120,55 @@ public class DZHRequestPackage1000: DZHRequestPackage {
 }
 
 class DZHResponseDataParser1000: DZHResponseDataParser {
+    var hqServerAddresses: Array<NSString>? // 行情服务器地址数组
+    var wtServerAddresses: Array<NSString>? // 委托服务器地址数组
+    var noticeText: NSString? // 公告信息
+    var newVersionNum: NSString? // 新版本号
+    var downloadAddress: NSString? // 下载地址
+    var isAlertUpdate: Bool? // 是否提醒升级
+    var isForceUpdate: Bool? // 是否强制升级
+    var isAlertLogin: Bool? // 是否提示登录
+    var carrierIP: CChar? // 用户运营商ip   0表示未知；非0表示有效，
+    var uploadLogInterval: CShort? // 统计信息时间间隔  单位秒,如果为0表示不统计信息
+    var updateNotice: NSString? // 升级提示文字
+    var noticeCRC: CShort? // 公告crc
+    var noticeType: CChar? // 公告提示类型
+    var scheduleAddresses: Array<NSString>? // 调度地址
+    var serverDict: Dictionary<Int32,Array<NSString>>? // 不同服务器地址列表
     
+    override func deSerialize(body: NSData?) {
+        if body != nil {
+            let data = body!
+            var pos: Int = 0
+            data.readStringArray(&hqServerAddresses, pos: &pos)
+            data.readStringArray(&wtServerAddresses, pos: &pos)
+            data.readString(&noticeText, pos: &pos)
+            data.readString(&newVersionNum, pos: &pos)
+            data.readString(&downloadAddress, pos: &pos)
+            data.readValue(&isAlertUpdate, size: 1, pos: &pos)
+            data.readValue(&isForceUpdate, size: 1, pos: &pos)
+            data.readValue(&isAlertLogin, size: 1, pos: &pos)
+            data.readValue(&carrierIP, pos: &pos)
+            data.readValue(&uploadLogInterval, pos: &pos)
+            data.readString(&updateNotice, pos: &pos)
+            data.readValue(&noticeCRC, pos: &pos)
+            data.readValue(&noticeType, pos: &pos)
+            data.readStringArray(&scheduleAddresses, pos: &pos)
+            var count: Int = 0
+            data.readValue(&count, size: strideof(ushort), pos: &pos)
+            if count > 0 {
+                var servDic: Dictionary<Int32,Array<NSString>> = Dictionary()
+                var serviceId: Int32 = 0
+                var serviceArray: Array<NSString>?
+                for _ in 0 ..< count {
+                    data.readValue(&serviceId, pos: &pos)
+                    data.readStringArray(&serviceArray, pos: &pos)
+                    if serviceArray != nil && serviceArray!.count > 0{
+                        servDic.updateValue(serviceArray!, forKey: serviceId)
+                    }
+                }
+                serverDict = servDic
+            }
+        }
+    }
 }
