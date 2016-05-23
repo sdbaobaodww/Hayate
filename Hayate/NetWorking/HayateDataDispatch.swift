@@ -9,7 +9,7 @@
 import Foundation
 
 public class HayateDataDispatch: NSObject {
-    let NormalHeaderLength = strideof(DZH_NORMALHEAD)
+    let NormalHeaderLength = DZH_NORMALHEAD.size()
     var receiveBytes: Int = 0
     var receiveData = NSMutableData()
     var requestPackages = NSMutableArray()
@@ -33,7 +33,7 @@ public class HayateDataDispatch: NSObject {
             var normalHeader: DZH_NORMALHEAD?;
             data.readValue(&normalHeader, pos: &pos)//获取包头数据
             let attr = (normalHeader!.attrs & 0x8) >> 3 //取长度扩充位，当置位时，用int表示数据长度；否则用short表示长度；
-            let byteSize = attr == 1 ? strideof(Int32) : strideof(CShort)
+            let byteSize = attr == 1 ? sizeof(Int32) : sizeof(CShort)
             var length = 0
             data.readValue(&length, size: byteSize, pos: &pos)//读取包数据长度
             let header: DZH_DATAHEAD_EX = DZH_DATAHEAD_EX(header: normalHeader!, len: length)//包头

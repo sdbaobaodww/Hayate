@@ -20,14 +20,22 @@ extension NSData {
     
     //从字节数组中读取指定类型的数据，只有在基础类型或者结构体时使用
     func readValue<T>(value: UnsafeMutablePointer<T>, pos : UnsafeMutablePointer<Int>) {
-        self.readValue(value, size: strideof(T), pos: pos)
+        self.readValue(value, size: sizeof(T), pos: pos)
+    }
+    
+    func readHeader(value:UnsafeMutablePointer<DZH_NORMALHEAD?>, pos : UnsafeMutablePointer<Int>) {
+        var header: DZH_NORMALHEAD = value.memory != nil ? value.memory! : DZH_NORMALHEAD(tag: 123,type: 0,attrs: 0)
+        self.readValue(&header.tag, size: sizeof(CChar), pos: pos)
+        self.readValue(&header.type, size: sizeof(CShort), pos: pos)
+        self.readValue(&header.attrs, size: sizeof(CShort), pos: pos)
+        value.memory = header
     }
     
     //从字节数组中读取一串字符串
     func readString(value: UnsafeMutablePointer<NSString?>, pos: UnsafeMutablePointer<Int>){
         var str: NSString? = nil
         var len: Int = 0
-        self.readValue(&len, size: strideof(ushort), pos: pos)
+        self.readValue(&len, size: sizeof(ushort), pos: pos)
         if len > 0 {
             let data = self.subdataWithRange(NSMakeRange(pos.memory, len))
             pos.memory += len
@@ -42,7 +50,7 @@ extension NSData {
     //从字节数组中读取一个字符串数组
     func readStringArray(value: UnsafeMutablePointer<Array<NSString>?>, pos: UnsafeMutablePointer<Int>){
         var count: Int = 0
-        self.readValue(&count, size: strideof(ushort), pos: pos)
+        self.readValue(&count, size: sizeof(ushort), pos: pos)
         if count > 0 {
             var arr: Array<NSString> = Array()
             var str: NSString?
@@ -64,7 +72,7 @@ extension NSMutableData {
     //往字节数组中写入字符串
     func writeString(string: NSString) {
         var len: ushort = ushort(string.lengthOfBytesUsingEncoding(NSUTF8StringEncoding))
-        self.appendBytes(&len, length: strideof(ushort))//写入字符串长度
+        self.appendBytes(&len, length: sizeof(ushort))//写入字符串长度
         self.appendData(string.dataUsingEncoding(NSUTF8StringEncoding)!)//写入字符串内容
     }
     
@@ -77,19 +85,19 @@ extension NSMutableData {
             self.writeString(str)
         case let arr as Array<AnyObject>:
             var count = ushort(arr.count)
-            self.appendBytes(&count, length: strideof(ushort))//写入数组长度
+            self.appendBytes(&count, length: sizeof(ushort))//写入数组长度
             for item in arr {
                 self.writeValue(item)//写入数组内容
             }
         case let arr as NSArray:
             var count = ushort(arr.count)
-            self.appendBytes(&count, length: strideof(ushort))//写入数组长度
+            self.appendBytes(&count, length: sizeof(ushort))//写入数组长度
             for item in arr {
                 self.writeValue(item)//写入数组内容
             }
         default:
             var data = value
-            self.appendBytes(&data, length: strideofValue(value))
+            self.appendBytes(&data, length: sizeofValue(value))
         }
     }
 }

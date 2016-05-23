@@ -45,6 +45,10 @@ struct DZH_NORMALHEAD{
     var tag: CChar
     var type: CShort
     var attrs: CShort
+    
+    static func size() -> Int {
+        return 5
+    }
 }
 
 protocol HayateSerialize {
@@ -91,6 +95,7 @@ public class DZHRequestPackage1000: DZHRequestPackage {
     var deviceType: NSString //终端类型
     var paymentFlag: CChar //收费用户标记
     var carrier: CChar //运营商标记
+    var serverList: Array<CInt>
     
     init(version: NSString, deviceID: NSString, deviceType: NSString) {
         self.version = version
@@ -98,6 +103,7 @@ public class DZHRequestPackage1000: DZHRequestPackage {
         self.deviceType = deviceType
         self.paymentFlag = 0
         self.carrier = 0
+        self.serverList = [1]
         super.init(header: DZH_DATAHEAD(tag: 123, type: 1000, attrs: 0, length:0), dataParser: DZHResponseDataParser1000())
     }
     
@@ -112,6 +118,7 @@ public class DZHRequestPackage1000: DZHRequestPackage {
         body.writeValue(deviceType)
         body.writeValue(paymentFlag)
         body.writeValue(carrier)
+        body.writeValue(serverList)
         self.header.length = ushort(body.length)
         let retData = super.serialize()
         retData.appendData(body)
@@ -155,7 +162,7 @@ class DZHResponseDataParser1000: DZHResponseDataParser {
             data.readValue(&noticeType, pos: &pos)
             data.readStringArray(&scheduleAddresses, pos: &pos)
             var count: Int = 0
-            data.readValue(&count, size: strideof(ushort), pos: &pos)
+            data.readValue(&count, size: sizeof(ushort), pos: &pos)
             if count > 0 {
                 var servDic: Dictionary<Int32,Array<NSString>> = Dictionary()
                 var serviceId: Int32 = 0
