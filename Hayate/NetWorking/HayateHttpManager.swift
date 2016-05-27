@@ -8,15 +8,14 @@
 
 import Foundation
 
-typealias Succeed = (AnyObject!)->Void
-
-typealias Failure = (NSError!)->Void
+public typealias Succeed = (AnyObject!)->Void
+public typealias Failure = (NSError!)->Void
 
 public class HayateHttpManager: NSObject {
  
-    var httpManager:AFHTTPSessionManager
+    private var httpManager:AFHTTPSessionManager
     
-    class var sharedInstance :HayateHttpManager {
+    public class var sharedInstance :HayateHttpManager {
         struct Static {
             static var onceToken:dispatch_once_t = 0
             static var instance:HayateHttpManager? = nil
@@ -35,7 +34,8 @@ public class HayateHttpManager: NSObject {
         httpManager.responseSerializer = AFHTTPResponseSerializer()
     }
     
-    func POSTStream(url: String, body: NSData, succeed: Succeed, failed: Failure){
+    //POST请求 body直接使用二进制数据
+    public func POSTStream(url: String, body: NSData, succeed: Succeed, failed: Failure){
         let mysucceed:Succeed = succeed
         let myfailure:Failure = failed
         let request = NSMutableURLRequest(URL: NSURL(string: url)!)
@@ -52,7 +52,7 @@ public class HayateHttpManager: NSObject {
     }
     
     //普通HTTP POST网络请求
-    func POST(url:String!,body:AnyObject?,succeed:Succeed,failed:Failure) {
+    public func POST(url:String!,body:AnyObject?,succeed:Succeed,failed:Failure) {
         let mysucceed:Succeed = succeed
         let myfailure:Failure = failed
         httpManager.POST(url, parameters: body, success: { (task:NSURLSessionDataTask!, responseObject:AnyObject!) in
@@ -63,7 +63,7 @@ public class HayateHttpManager: NSObject {
     }
     
     //普通HTTP GET网络请求
-    func GET(url:String!,body:AnyObject?,succeed:Succeed,failed:Failure) {
+    public func GET(url:String!,body:AnyObject?,succeed:Succeed,failed:Failure) {
         let mysucceed:Succeed = succeed
         let myfailure:Failure = failed
         httpManager.GET(url, parameters: nil,
@@ -75,7 +75,7 @@ public class HayateHttpManager: NSObject {
     }
     
     //上传图片
-    func  uploadImage(url:String,body:Dictionary<String,String>?,imagePath:String,succeed:Succeed,failed:Failure){
+    public func uploadImage(url:String,body:Dictionary<String,String>?,imagePath:String,succeed:Succeed,failed:Failure){
         let image: UIImage? = UIImage(contentsOfFile:imagePath)
         let imageData: NSData? = UIImageJPEGRepresentation(image!, 1.0)
         if imageData != nil {

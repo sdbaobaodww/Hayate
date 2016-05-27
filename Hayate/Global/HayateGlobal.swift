@@ -11,14 +11,14 @@ import Foundation
 public class HayateGlobal: NSObject {
     
     static let SchedulingServerAddress: [(String,ushort)] = [("222.73.34.8",12346),("222.73.103.42",12346),("61.151.252.4",12346),("61.151.252.14",12346)];
-    static let VersionNumber: NSString = "8.34"
-    static let ChannelNo: NSString = "213"
-    static let TerminalId: NSString = "iphone"
-    static let PlatformId: NSString = "14"
+    public static let VersionNumber: NSString = "8.34"
+    public static let ChannelNo: NSString = "213"
+    public static let TerminalId: NSString = "iphone"
+    public static let PlatformId: NSString = "14"
     static let KeyChainAccessGroup: NSString = "59B8QAXTFE.com.gw.dzhiphone622";
     static let DeviceIDKey: NSString = "DeviceID"
     
-    class func deviceId() -> NSString{
+    public class func deviceId() -> NSString{
         let svc = String(stringInterpolation: "\(KeyChainAccessGroup).\(DeviceIDKey)");
         let act = "com.gw"
         var deviceId : NSString? = SSKeychain.passwordForService(svc, account: act)
@@ -40,7 +40,7 @@ public class HayateGlobal: NSObject {
         return deviceId!
     }
     
-    class func uuidString() -> NSString {
+    public class func uuidString() -> NSString {
         let uuidString = NSUUID().UUIDString;
         var str : NSString = uuidString.stringByReplacingOccurrencesOfString("-", withString: "")
         let count = str.length
@@ -63,13 +63,13 @@ public class HayateGlobal: NSObject {
         return retVal;
     }
     
-    class func userConfig() -> NSDictionary{
+    public class func userConfig() -> NSDictionary{
         struct Static {
             static var onceToken:dispatch_once_t = 0
             static var config:Dictionary<String,AnyObject>? = nil
         }
         dispatch_once(&Static.onceToken, { () -> Void in
-            if let dic = self .userPreferenceConfigDic() {
+            if let dic = self.userPreferenceConfigDic() {
                 Static.config = dic as? Dictionary<String, AnyObject>
             } else {
                 Static.config = Dictionary()
@@ -78,7 +78,7 @@ public class HayateGlobal: NSObject {
         return Static.config!
     }
     
-    class func saveUserConfig(key:NSString, value:NSString){
+    public class func saveUserConfig(key:NSString, value:NSString){
         self.userConfig().setValue(value, forKey: key as String)
         self.userConfig().writeToFile(self.documentFilePath("user.plist"), atomically: true)
     }

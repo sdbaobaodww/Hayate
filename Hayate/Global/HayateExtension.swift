@@ -11,28 +11,15 @@ import Foundation
 extension NSData {
     
     //从字节数组中读取指定size的数据，有可能会产生类型改变，如可以读取2个字节的数据到一个Int类型
-    func readValue(value: UnsafeMutablePointer<Void>, size: Int, pos : UnsafeMutablePointer<Int>) {
+    public func readValue(value: UnsafeMutablePointer<Void>, size: Int, pos : UnsafeMutablePointer<Int>) {
         if pos.memory + size <= self.length {
             self.getBytes(value, range: NSMakeRange(pos.memory, size))
             pos.memory += size
         }
     }
     
-    //从字节数组中读取指定类型的数据，只有在基础类型或者结构体时使用
-    func readValue<T>(value: UnsafeMutablePointer<T>, pos : UnsafeMutablePointer<Int>) {
-        self.readValue(value, size: sizeof(T), pos: pos)
-    }
-    
-    func readHeader(value:UnsafeMutablePointer<DZH_NORMALHEAD?>, pos : UnsafeMutablePointer<Int>) {
-        var header: DZH_NORMALHEAD = value.memory != nil ? value.memory! : DZH_NORMALHEAD(tag: 123,type: 0,attrs: 0)
-        self.readValue(&header.tag, size: sizeof(CChar), pos: pos)
-        self.readValue(&header.type, size: sizeof(CShort), pos: pos)
-        self.readValue(&header.attrs, size: sizeof(CShort), pos: pos)
-        value.memory = header
-    }
-    
     //从字节数组中读取一串字符串
-    func readString(value: UnsafeMutablePointer<NSString?>, pos: UnsafeMutablePointer<Int>){
+    public func readString(value: UnsafeMutablePointer<NSString?>, pos: UnsafeMutablePointer<Int>){
         var str: NSString? = nil
         var len: Int = 0
         self.readValue(&len, size: sizeof(ushort), pos: pos)
@@ -48,7 +35,7 @@ extension NSData {
     }
     
     //从字节数组中读取一个字符串数组
-    func readStringArray(value: UnsafeMutablePointer<Array<NSString>?>, pos: UnsafeMutablePointer<Int>){
+    public func readStringArray(value: UnsafeMutablePointer<Array<NSString>?>, pos: UnsafeMutablePointer<Int>){
         var count: Int = 0
         self.readValue(&count, size: sizeof(ushort), pos: pos)
         if count > 0 {
@@ -70,25 +57,61 @@ extension NSData {
 extension NSMutableData {
     
     //往字节数组中写入字符串
-    func writeString(string: NSString) {
+    public func writeString(string: NSString) {
         var len: ushort = ushort(string.lengthOfBytesUsingEncoding(NSUTF8StringEncoding))
         self.appendBytes(&len, length: sizeof(ushort))//写入字符串长度
         self.appendData(string.dataUsingEncoding(NSUTF8StringEncoding)!)//写入字符串内容
     }
     
+    public func writeBaseValue<T>(value: T) {
+        var data = value
+        self.appendBytes(&data, length: sizeof(T))
+    }
+    
     //往字节数组中写入指定类型的数据
-    func writeValue<T>(value: T) {
+    public func writeValue<T>(value: T) {
         switch value {
+            //Int各类型
+        case _ as Int:
+            self.writeBaseValue(value)
+        case _ as Int8:
+            self.writeBaseValue(value)
+        case _ as Int16:
+            self.writeBaseValue(value)
+        case _ as Int32:
+            self.writeBaseValue(value)
+        case _ as Int64:
+            self.writeBaseValue(value)
+            
+            //UInt各类型
+        case _ as UInt:
+            self.writeBaseValue(value)
+        case _ as UInt8:
+            self.writeBaseValue(value)
+        case _ as UInt16:
+            self.writeBaseValue(value)
+        case _ as UInt32:
+            self.writeBaseValue(value)
+        case _ as UInt64:
+            self.writeBaseValue(value)
+            
+            //Bool
+        case _ as Bool:
+            self.writeBaseValue(value)
+           
+            //浮点型
+        case _ as Float:
+            self.writeBaseValue(value)
+        case _ as Double:
+            self.writeBaseValue(value)
+            
+            //字符串
         case let str as String:
             self.writeString(str)
         case let str as NSString:
             self.writeString(str)
-        case let arr as Array<AnyObject>:
-            var count = ushort(arr.count)
-            self.appendBytes(&count, length: sizeof(ushort))//写入数组长度
-            for item in arr {
-                self.writeValue(item)//写入数组内容
-            }
+            
+            //数组
         case let arr as NSArray:
             var count = ushort(arr.count)
             self.appendBytes(&count, length: sizeof(ushort))//写入数组长度
@@ -96,8 +119,31 @@ extension NSMutableData {
                 self.writeValue(item)//写入数组内容
             }
         default:
-            var data = value
-            self.appendBytes(&data, length: sizeofValue(value))
+            break
+            
         }
+    }
+    
+    //往字节数组中写入基本数据类型的数组
+    public func writeArray<T>(arr: Array<T>) {
+        var count = ushort(arr.count)
+        self.appendBytes(&count, length: sizeof(ushort))//写入数组长度
+        for item in arr {
+            self.writeValue(item)//写入数组内容
+        }
+    }
+}
+
+extension Array {
+    public func randomObject() -> Element {
+        srandom(UInt32(time(nil)))            // 种子,random对应的是srandom
+        return self[random() % self.count]
+    }
+}
+
+extension NSArray {
+    public func randomObject() -> AnyObject {
+        srandom(UInt32(time(nil)))            // 种子,random对应的是srandom
+        return self[random() % self.count]
     }
 }

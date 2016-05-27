@@ -8,9 +8,13 @@
 
 import UIKit
 
+public let HayateReceiveServerAddress: String = "HayateReceiveServerAddress" //获取行情服务器成功通知
+
 public class SchedulingServerManager : NSObject{
     
-    class var sharedInstance :SchedulingServerManager {
+    var isRequesting: Bool = false
+    
+    public class var sharedInstance :SchedulingServerManager {
         struct Static {
             static var onceToken:dispatch_once_t = 0
             static var instance:SchedulingServerManager? = nil
@@ -21,31 +25,35 @@ public class SchedulingServerManager : NSObject{
         return Static.instance!
     }
     
-    func requestMarketAddress() {
+    public func requestMarketAddress() {
+        if isRequesting {
+            return
+        }
+        isRequesting = true
         let addresses : Array = HayateGlobal.SchedulingServerAddress;
-        let count : Int = addresses.count
-        srandom(UInt32(time(nil)))            // 种子,random对应的是srandom
-        let index : Int = random() % count
-        let address : (String,ushort) = addresses[index]
+        let address : (String,ushort) = addresses.randomObject()
         let url = String(stringInterpolation: "http://\(address.0):\(address.1)")
         let package1000 = DZHRequestPackage1000()
         
         HayateHttpManager.sharedInstance.POSTStream(url, body: package1000.serialize(), succeed: { (responseData) in
                 let data = responseData as! NSData
-                if data.length > DZH_NORMALHEAD.size() {
-                    let parser = package1000.responseParser
-                    var normalHeader: DZH_NORMALHEAD?;
+                if data.length >= DZH_DATAHEAD.fixedSize() {
                     var pos = 0 //处理的长度
-                    data.readHeader(&normalHeader, pos: &pos)//获取包头数据
-                    let attr = (normalHeader!.attrs & 0x8) >> 3 //取长度扩充位，当置位时，用int表示数据长度；否则用short表示长度；
-                    let byteSize = attr == 1 ? sizeof(Int32) : sizeof(CShort)
-                    var length = 0
-                    data.readValue(&length, size: byteSize, pos: &pos)//读取包的数据长度
-                    parser.header = DZH_DATAHEAD_EX(header: normalHeader!, len: length)
-                    parser.deSerialize(length > 0 ? data.subdataWithRange(NSMakeRange(pos, length)) : nil)
+                    var header: DZH_DATAHEAD = DZH_DATAHEAD()
+                    header.deSerialize(data, pos: &pos)//反序列化包头数据
+                    let parser = package1000.responseParser(header)
+                    parser.header = header
+                    parser.deSerialize(header.length > 0 ? data.subdataWithRange(NSMakeRange(pos, header.length)) : nil)
+                    NSNotificationCenter.defaultCenter().postNotificationName(HayateReceiveServerAddress, object: nil)//发出获取到行情服务器的通知
                 }
+                else {
+                    self.performSelector(#selector(SchedulingServerManager.requestMarketAddress), withObject: nil, afterDelay: 1)
+                }
+                self.isRequesting = false
             }, failed:{ (error) in
-                print("receive failed")
+                
+                self.performSelector(#selector(SchedulingServerManager.requestMarketAddress), withObject: nil, afterDelay: 1)
+                self.isRequesting = false
         })
     }
 }
