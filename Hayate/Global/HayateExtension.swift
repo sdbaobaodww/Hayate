@@ -135,15 +135,23 @@ extension NSMutableData {
 }
 
 extension Array {
-    public func randomObject() -> Element {
-        srandom(UInt32(time(nil)))            // 种子,random对应的是srandom
-        return self[random() % self.count]
+    public func randomObject() -> Element? {
+        if self.count == 0 {
+            return nil
+        }else{
+            srandom(UInt32(time(nil)))            // 种子,random对应的是srandom
+            return self[random() % self.count]
+        }
     }
 }
 
 extension NSArray {
-    public func randomObject() -> AnyObject {
-        srandom(UInt32(time(nil)))            // 种子,random对应的是srandom
-        return self[random() % self.count]
+    public func randomObject() -> AnyObject? {
+        if self.count == 0 {
+            return nil
+        }else{
+            srandom(UInt32(time(nil)))            // 种子,random对应的是srandom
+            return self[random() % self.count]
+        }
     }
 }

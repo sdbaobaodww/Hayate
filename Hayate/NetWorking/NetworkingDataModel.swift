@@ -8,80 +8,6 @@
 
 import Foundation
 
-// 数据包头
-public struct DZH_DATAHEAD {
-    public var tag: CChar
-    public var type: CShort
-    public var attrs: CShort
-    public var length: Int
-    
-    init() {
-        self.init(123, 0, 0, 0)
-    }
-    
-    init(_ tag: CChar, _ type: CShort, _ attrs: CShort, _ length: Int) {
-        self.tag = tag
-        self.type = type
-        self.attrs = attrs
-        self.length = length
-    }
-    
-    public mutating func serialize(bodySize: Int) -> NSMutableData {
-        let header: NSMutableData = NSMutableData()
-        header.writeValue(tag)
-        header.writeValue(type)
-        header.writeValue(attrs)
-        length = bodySize
-        header.writeValue(ushort(bodySize))
-        return header
-    }
-    
-    public mutating func deSerialize(data: NSData, pos: UnsafeMutablePointer<Int>) {
-        data.readValue(&tag, size: sizeof(CChar), pos: pos)
-        data.readValue(&type, size: sizeof(CShort), pos: pos)
-        data.readValue(&attrs, size: sizeof(CShort), pos: pos)
-        let attr = (attrs & 0x8) >> 3 //取长度扩充位，当置位时，用int表示数据长度；否则用short表示长度；
-        let byteSize = attr == 1 ? sizeof(Int32) : sizeof(CShort)
-        data.readValue(&length, size: byteSize, pos: pos)//读取包的数据长度
-    }
-    
-    public static func fixedSize() -> Int {
-        return 7
-    }
-}
-
-public class DZHRequestPackage: NSObject {
-    var header: DZH_DATAHEAD
-    var parser: DZHResponseDataParser?
-    
-    init(header: DZH_DATAHEAD) {
-        self.header = header
-    }
-    
-    public func responseParser(responseHeader: DZH_DATAHEAD) -> DZHResponseDataParser {
-        if parser == nil {
-            parser = DZHResponseDataParser()
-        }
-        return parser!
-    }
-    
-    public func serialize() -> NSMutableData {
-        return self.header.serialize(0)//默认写一个空包头
-    }
-    
-    public func isMatchPackage(responseHeader: DZH_DATAHEAD) -> Bool {
-        return header.tag == responseHeader.tag && header.type == responseHeader.type
-    }
-}
-
-public class DZHResponseDataParser: NSObject {
-    var header: DZH_DATAHEAD?
-    
-    public func deSerialize(body: NSData?) {
-        
-    }
-}
-
 public class DZHRequestPackage1000: DZHRequestPackage {
     public var version: NSString //版本号
     public var deviceID: NSString //终端编号
@@ -106,12 +32,12 @@ public class DZHRequestPackage1000: DZHRequestPackage {
     
     override public func responseParser(responseHeader: DZH_DATAHEAD) -> DZHResponseDataParser {
         if parser == nil {
-            parser = DZHResponseDataParser1000()
+            parser = DZHResponsePackage1000()
         }
         return parser!
     }
     
-    override public func serialize() -> NSMutableData {
+    override public func serializeBody() -> NSData? {
         let body: NSMutableData = NSMutableData()
         body.writeValue(version)
         body.writeValue(deviceID)
@@ -119,13 +45,11 @@ public class DZHRequestPackage1000: DZHRequestPackage {
         body.writeValue(paymentFlag)
         body.writeValue(carrier)
         body.writeArray(serverList)
-        let header = self.header.serialize(body.length)
-        header.appendData(body)
-        return header
+        return body
     }
 }
 
-public class DZHResponseDataParser1000: DZHResponseDataParser {
+public class DZHResponsePackage1000: DZHResponseDataParser {
     public var hqServerAddresses: Array<NSString>? // 行情服务器地址数组
     public var wtServerAddresses: Array<NSString>? // 委托服务器地址数组
     public var noticeText: NSString? // 公告信息
@@ -175,6 +99,37 @@ public class DZHResponseDataParser1000: DZHResponseDataParser {
                 }
                 serverDict = servDic
             }
+        }
+    }
+}
+
+public class DZHRequestPackage2940: DZHRequestPackage {
+    var code: NSString
+    
+    init(code: NSString) {
+        self.code = code
+        super.init(header: DZH_DATAHEAD(123, 2940, 0, 0))
+    }
+    
+    override public func responseParser(responseHeader: DZH_DATAHEAD) -> DZHResponseDataParser {
+        if parser == nil {
+            parser = DZHResponsePackage2940()
+        }
+        return parser!
+    }
+    
+    override public func serializeBody() -> NSData? {
+        let body: NSMutableData = NSMutableData()
+        body.writeValue(code)
+        return body
+    }
+}
+
+public class DZHResponsePackage2940: DZHResponseDataParser {
+    
+    override public func deSerialize(body: NSData?) {
+        if body != nil {
+            print("收到的2940数据 \(body)")
         }
     }
 }

@@ -12,36 +12,29 @@ public typealias Succeed = (AnyObject!)->Void
 public typealias Failure = (NSError!)->Void
 
 public class HayateHttpManager: NSObject {
- 
     private var httpManager:AFHTTPSessionManager
     
-    public class var sharedInstance :HayateHttpManager {
-        struct Static {
-            static var onceToken:dispatch_once_t = 0
-            static var instance:HayateHttpManager? = nil
-        }
-        dispatch_once(&Static.onceToken, { () -> Void in
-            Static.instance = HayateHttpManager()
-        })
-        return Static.instance!
+    override convenience init(){
+        self.init(constructing: { (manager: AFHTTPSessionManager) in
+                manager.requestSerializer = AFHTTPRequestSerializer()
+                manager.responseSerializer = AFHTTPResponseSerializer()
+            })
     }
     
-    override init(){
+    init(constructing: (httpMananger: AFHTTPSessionManager) -> Void) {
         let sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration()
         sessionConfig.timeoutIntervalForResource = 10
         httpManager = AFHTTPSessionManager(baseURL: nil, sessionConfiguration: sessionConfig);
-        httpManager.requestSerializer = AFHTTPRequestSerializer()
-        httpManager.responseSerializer = AFHTTPResponseSerializer()
+        constructing(httpMananger: httpManager)
     }
     
     //POST请求 body直接使用二进制数据
     public func POSTStream(url: String, body: NSData, succeed: Succeed, failed: Failure){
-        let mysucceed:Succeed = succeed
-        let myfailure:Failure = failed
+        let mysucceed: Succeed = succeed
+        let myfailure: Failure = failed
         let request = NSMutableURLRequest(URL: NSURL(string: url)!)
         request.HTTPMethod = "POST"
         request.HTTPBody = body
-        request.timeoutInterval = 10
         httpManager.dataTaskWithRequest(request, completionHandler: { (response: NSURLResponse!, responseObject: AnyObject!, error: NSError?) in
             if error != nil {
                 myfailure(error)
@@ -52,40 +45,40 @@ public class HayateHttpManager: NSObject {
     }
     
     //普通HTTP POST网络请求
-    public func POST(url:String!,body:AnyObject?,succeed:Succeed,failed:Failure) {
-        let mysucceed:Succeed = succeed
-        let myfailure:Failure = failed
+    public func POST(url: String!, body: AnyObject?, succeed: Succeed, failed: Failure) {
+        let mysucceed: Succeed = succeed
+        let myfailure: Failure = failed
         httpManager.POST(url, parameters: body, success: { (task:NSURLSessionDataTask!, responseObject:AnyObject!) in
                 mysucceed(responseObject)
-            }, failure:{ (task:NSURLSessionDataTask!, error:NSError!) in
+            }, failure:{ (task: NSURLSessionDataTask!, error: NSError!) in
                 myfailure(error)
         })
     }
     
     //普通HTTP GET网络请求
-    public func GET(url:String!,body:AnyObject?,succeed:Succeed,failed:Failure) {
-        let mysucceed:Succeed = succeed
-        let myfailure:Failure = failed
+    public func GET(url: String!, body: AnyObject?, succeed: Succeed, failed: Failure) {
+        let mysucceed: Succeed = succeed
+        let myfailure: Failure = failed
         httpManager.GET(url, parameters: nil,
-                        success: { (task:NSURLSessionDataTask!, responseObject:AnyObject!) in
+                        success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
                             mysucceed(responseObject)
-                        }, failure: {(task:NSURLSessionDataTask!, error:NSError!) in
+                        }, failure: {(task: NSURLSessionDataTask!, error: NSError!) in
                             myfailure(error)
         })
     }
     
     //上传图片
-    public func uploadImage(url:String,body:Dictionary<String,String>?,imagePath:String,succeed:Succeed,failed:Failure){
-        let image: UIImage? = UIImage(contentsOfFile:imagePath)
+    public func uploadImage(url: String, body: Dictionary<String,String>?, imagePath: String, succeed: Succeed, failed: Failure){
+        let image: UIImage? = UIImage(contentsOfFile: imagePath)
         let imageData: NSData? = UIImageJPEGRepresentation(image!, 1.0)
         if imageData != nil {
             let mysucceed: Succeed = succeed
             let myfailure: Failure = failed
-            httpManager.POST(url, parameters: body, constructingBodyWithBlock: { (formData:AFMultipartFormData!) in
+            httpManager.POST(url, parameters: body, constructingBodyWithBlock: { (formData: AFMultipartFormData!) in
                 formData.appendPartWithFileData(imageData!, name: "upload", fileName: "upload", mimeType: "image/jpeg")
-                }, success: { (task:NSURLSessionDataTask!, responseObject:AnyObject!)in
+                }, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!)in
                     mysucceed(responseObject)
-                }, failure: { (task:NSURLSessionDataTask!, error:NSError!)in
+                }, failure: { (task: NSURLSessionDataTask!, error: NSError!)in
                     myfailure(error)
             })
         }

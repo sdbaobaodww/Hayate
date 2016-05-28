@@ -18,8 +18,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         let serverManager = SchedulingServerManager.sharedInstance
-        serverManager.requestMarketAddress()
+        serverManager.createSocket()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.didConnectToServer), name: HayateConnectSuccessNotification, object: nil)
+        
         return true
+    }
+    
+    func didConnectToServer() {
+        let request = DZHRequestPackage2940(code:"300213")
+        request.sendRequest { (status) in
+            print("请求结束 \(status)")
+        }
     }
 
     func applicationWillResignActive(application: UIApplication) {
