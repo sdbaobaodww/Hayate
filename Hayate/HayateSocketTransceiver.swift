@@ -15,13 +15,13 @@ typealias ReadSuccessBlock = (data: NSData)->Void
 
 class HayateSocketTransceiver: NSObject {
     var socket: GCDAsyncSocket = GCDAsyncSocket()
-    let delegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
     var connectSuccessBlock: ConnectSuccessBlock?
+    var connectFailureBlock: ConnectSuccessBlock?
     var disConnectBlock: DisconnectBlock?
     var writeSuccessBlock: WriteSuccessBlock?
     var readSuccessBlock: ReadSuccessBlock?
     
-    override init() {
+    init(delegateQueue: dispatch_queue_t) {
         super.init()
         socket.delegate = self
         socket.delegateQueue = delegateQueue
@@ -32,6 +32,9 @@ class HayateSocketTransceiver: NSObject {
             try socket.connectToHost(host, onPort: port, withTimeout: timeout)
         }catch let error as NSError  {
             print("socket connect error code:\(error.code) domain:\(error.domain)")
+            if self.connectFailureBlock != nil {
+                self.connectFailureBlock!(host: host, port: port)
+            }
         }
     }
     
@@ -44,21 +47,17 @@ class HayateSocketTransceiver: NSObject {
     }
     
     func sendData(data: NSData, tag: CLong) {
-        print("socket send data \(tag)")
         socket.writeData(data, withTimeout: -1, tag: tag)
     }
     
     func socket(sock: GCDAsyncSocket, didConnectToHost host: NSString, port:u_short) {
-        sock.performBlock { 
-            sock.enableBackgroundingOnSocket()
-        }
         if self.connectSuccessBlock != nil {
             self.connectSuccessBlock!(host: sock.connectedHost, port: sock.connectedPort)
         }
+        sock.readDataWithTimeout(-1, tag: 0)
     }
     
     func socket(sock: GCDAsyncSocket, didWriteDataWithTag tag: CLong) {
-        print("socket send data \(tag) success")
         if self.writeSuccessBlock != nil {
             self.writeSuccessBlock!(tag: tag)
         }
@@ -69,10 +68,10 @@ class HayateSocketTransceiver: NSObject {
     }
     
     func socket(sock: GCDAsyncSocket, didReadData data: NSData, withTag tag: CLong) {
-        print("socket receive data \(tag) success")
         if self.readSuccessBlock != nil {
             self.readSuccessBlock!(data: data)
         }
+        sock.readDataWithTimeout(-1, tag: 0)
     }
     
     func socket(sock: GCDAsyncSocket, shouldTimeoutReadWithTag tag: CLong, elapsed: NSTimeInterval, bytesDone length: UInt) -> NSTimeInterval {

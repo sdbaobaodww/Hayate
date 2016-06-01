@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class DZHRequestPackage1000: DZHRequestPackage {
+public class DZHRequestPackage1000: DZHMarketRequestPackage {
     public var version: NSString //版本号
     public var deviceID: NSString //终端编号
     public var deviceType: NSString //终端类型
@@ -23,18 +23,11 @@ public class DZHRequestPackage1000: DZHRequestPackage {
         self.paymentFlag = 0
         self.carrier = 0
         self.serverList = [1]
-        super.init(header: DZH_DATAHEAD(123, 1000, 0, 0))
+        super.init(header: DZH_DATAHEAD(123, 1000, 0, 0), parser: DZHResponsePackage1000())
     }
     
     convenience init() {
         self.init(version: HayateGlobal.VersionNumber, deviceID: HayateGlobal.deviceId(), deviceType: HayateGlobal.TerminalId)
-    }
-    
-    override public func responseParser(responseHeader: DZH_DATAHEAD) -> DZHResponseDataParser {
-        if parser == nil {
-            parser = DZHResponsePackage1000()
-        }
-        return parser!
     }
     
     override public func serializeBody() -> NSData? {
@@ -103,22 +96,54 @@ public class DZHResponsePackage1000: DZHResponseDataParser {
     }
 }
 
-public class DZHRequestPackage2940: DZHRequestPackage {
+public class DZHRequestPackage2939: DZHMarketRequestPackage {
     var code: NSString
     
     init(code: NSString) {
         self.code = code
-        super.init(header: DZH_DATAHEAD(123, 2940, 0, 0))
+        super.init(header: DZH_DATAHEAD(HayateTagCreator.sharedInstance.tag(), 2939, 0, 0), parser: nil)
     }
     
-    override public func responseParser(responseHeader: DZH_DATAHEAD) -> DZHResponseDataParser {
-        if parser == nil {
-            parser = DZHResponsePackage2940()
+    override func generateResponseParser(responseHeader: HayatePackageHeader) {
+        if responseParser == nil {
+            responseParser = responseHeader.packageType() == 2939 ? DZHResponsePackage2939() : DZHResponsePackage2943()
         }
-        return parser!
     }
     
-    override public func serializeBody() -> NSData? {
+    override func serializeBody() -> NSData? {
+        let body: NSMutableData = NSMutableData()
+        body.writeValue(code)
+        return body
+    }
+}
+
+public class DZHResponsePackage2939: DZHResponseDataParser {
+    
+    override public func deSerialize(body: NSData?) {
+        if body != nil {
+            
+        }
+    }
+}
+
+public class DZHResponsePackage2943: DZHResponseDataParser {
+    
+    override public func deSerialize(body: NSData?) {
+        if body != nil {
+            
+        }
+    }
+}
+
+public class DZHRequestPackage2940: DZHMarketRequestPackage {
+    var code: NSString
+    
+    init(code: NSString) {
+        self.code = code
+        super.init(header: DZH_DATAHEAD(HayateTagCreator.sharedInstance.tag(), 2940, 0, 0), parser: DZHResponsePackage2940())
+    }
+    
+    override func serializeBody() -> NSData? {
         let body: NSMutableData = NSMutableData()
         body.writeValue(code)
         return body
@@ -129,7 +154,23 @@ public class DZHResponsePackage2940: DZHResponseDataParser {
     
     override public func deSerialize(body: NSData?) {
         if body != nil {
-            print("收到的2940数据 \(body)")
+            
+        }
+    }
+}
+
+public class DZHRequestPackage2963: DZHMarketRequestPackage {
+    
+    init() {
+        super.init(header: DZH_DATAHEAD(123, 2963, 0, 0), parser: DZHResponsePackage2963())
+    }
+}
+
+public class DZHResponsePackage2963: DZHResponseDataParser {
+    
+    override public func deSerialize(body: NSData?) {
+        if body != nil {
+            
         }
     }
 }

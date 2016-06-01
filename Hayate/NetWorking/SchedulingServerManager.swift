@@ -11,9 +11,10 @@ import UIKit
 public let HayateServerManagerNotification: String = "HayateServerManagerNotification" //获取行情服务器成功通知
 
 public class SchedulingServerManager : NSObject{
+    
     public var package1000: DZHRequestPackage1000?
     var isRequesting: Bool = false
-    var socketManager: HayateSocketManager = HayateSocketManager()
+    var socketManager: HayateMarketSocketManager = HayateMarketSocketManager(monitor: AppDelegate.theAppDelegate().socketMonitor)
     var httpManager: HayateHttpManager = HayateHttpManager()
     
     public class var sharedInstance: SchedulingServerManager {
@@ -53,10 +54,10 @@ public class SchedulingServerManager : NSObject{
     
     private func receiveMarketAddress(package1000: DZHRequestPackage1000) {
         print("保存行情服务器地址")
-        HayateGlobal.saveUserConfig("ServerAddresses", value: (package1000.parser as! DZHResponsePackage1000).hqServerAddresses!)//保存行情服务器地址
+        HayateGlobal.saveUserConfig("ServerAddresses", value: (package1000.responseParser as! DZHResponsePackage1000).hqServerAddresses!)//保存行情服务器地址
         if !self.socketManager.isConnected() {
             print("行情服务器还未连接，使用最新行情地址")
-            self.createSocket((package1000.parser as! DZHResponsePackage1000).hqServerAddresses!)
+            self.createSocket((package1000.responseParser as! DZHResponsePackage1000).hqServerAddresses!)
         }
         NSNotificationCenter.defaultCenter().postNotificationName(HayateServerManagerNotification, object: package1000)//发出获取到行情服务器的通知
     }
@@ -72,21 +73,21 @@ public class SchedulingServerManager : NSObject{
         
         httpManager.POSTStream(url, body: package1000.serialize(), succeed: { (responseData) in
                 let data = responseData as! NSData
-                if data.length >= DZH_DATAHEAD.fixedSize() {
+                if data.length >= DZH_DATAHEAD.minSize() {
                     var pos = 0 //处理的长度
                     var header: DZH_DATAHEAD = DZH_DATAHEAD()
-                    header.deSerialize(data, pos: &pos)//反序列化包头数据
-                    package1000.receiveData(header, data: header.length > 0 ? data.subdataWithRange(NSMakeRange(pos, header.length)) : nil)
+                    let length = header.deSerialize(data, pos: &pos)//反序列化包头数据
+                    package1000.receiveData(header, data: length > 0 ? data.subdataWithRange(NSMakeRange(pos, length)) : nil)
                     self.package1000 = package1000
                     self.receiveMarketAddress(package1000)
                 }
                 else {
-                    self.performSelector(#selector(SchedulingServerManager.requestMarketAddress), withObject: nil, afterDelay: 1)
+                    self.performSelector(#selector(self.requestMarketAddress), withObject: nil, afterDelay: 1)
                 }
                 self.isRequesting = false
             }, failed:{ (error) in
                 
-                self.performSelector(#selector(SchedulingServerManager.requestMarketAddress), withObject: nil, afterDelay: 1)
+                self.performSelector(#selector(self.requestMarketAddress), withObject: nil, afterDelay: 1)
                 self.isRequesting = false
         })
     }

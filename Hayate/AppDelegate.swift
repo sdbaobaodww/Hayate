@@ -12,26 +12,43 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    var socketMonitor: HayateSocketMonitor?
+    var socketHeartBeat: HayateSocketHeartBeat = HayateSocketHeartBeat()
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
+        socketMonitor = HayateSocketMonitor()
         let serverManager = SchedulingServerManager.sharedInstance
         serverManager.createSocket()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(AppDelegate.didConnectToServer), name: HayateConnectSuccessNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.didConnectToServer), name: HayateConnectSuccessNotification, object: nil)
         
         return true
     }
     
+    class func theAppDelegate() -> AppDelegate {
+        return ((UIApplication.sharedApplication().delegate) as! AppDelegate)
+    }
+    
     func didConnectToServer() {
-        let request = DZHRequestPackage2940(code:"300213")
-        request.sendRequest { (status) in
-            print("请求结束 \(status)")
+        let group = DZHMarketRequestGroupPackage()
+        let request2939 = DZHRequestPackage2939(code:"300213")
+        request2939.responseCompletion = { (status) in
+            print("2939请求结束 \(status)")
+        }
+        let request2940 = DZHRequestPackage2940(code:"300213")
+        request2940.responseCompletion = { (status) in
+            print("2940请求结束 \(status)")
+        }
+        group.addPackage(request2939)
+        group.addPackage(request2940)
+        
+        group.sendRequest { (status) in
+            print("组包请求结束 \(status)")
         }
     }
-
+    
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
