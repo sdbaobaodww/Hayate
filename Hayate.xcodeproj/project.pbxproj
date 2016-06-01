@@ -33,6 +33,8 @@
 		892749E21CEB33EE006B311C /* HayateHttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892749E11CEB33EE006B311C /* HayateHttpManager.swift */; };
 		892749E71CEB55BA006B311C /* HayateGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 892749E61CEB55BA006B311C /* HayateGlobal.swift */; };
 		892749F01CEB55F2006B311C /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 892749EF1CEB55F2006B311C /* SSKeychain.m */; };
+		893EF2C21CFF1A3E00AC10C6 /* dzhbitstream.c in Sources */ = {isa = PBXBuildFile; fileRef = 893EF2BE1CFF1A3E00AC10C6 /* dzhbitstream.c */; };
+		893EF2C31CFF1A3E00AC10C6 /* DZHMarketDataDecompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 893EF2C11CFF1A3E00AC10C6 /* DZHMarketDataDecompression.m */; };
 		897B46881CE37D6D004B8760 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B46871CE37D6D004B8760 /* AppDelegate.swift */; };
 		897B468A1CE37D6D004B8760 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B46891CE37D6D004B8760 /* ViewController.swift */; };
 		897B468D1CE37D6D004B8760 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 897B468B1CE37D6D004B8760 /* Main.storyboard */; };
@@ -86,6 +88,10 @@
 		892749E61CEB55BA006B311C /* HayateGlobal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HayateGlobal.swift; path = Global/HayateGlobal.swift; sourceTree = "<group>"; };
 		892749EE1CEB55F2006B311C /* SSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSKeychain.h; sourceTree = "<group>"; };
 		892749EF1CEB55F2006B311C /* SSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSKeychain.m; sourceTree = "<group>"; };
+		893EF2BE1CFF1A3E00AC10C6 /* dzhbitstream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dzhbitstream.c; path = Library/DZHMarketDataDecompression/dzhbitstream.c; sourceTree = "<group>"; };
+		893EF2BF1CFF1A3E00AC10C6 /* dzhbitstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dzhbitstream.h; path = Library/DZHMarketDataDecompression/dzhbitstream.h; sourceTree = "<group>"; };
+		893EF2C01CFF1A3E00AC10C6 /* DZHMarketDataDecompression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DZHMarketDataDecompression.h; path = Library/DZHMarketDataDecompression/DZHMarketDataDecompression.h; sourceTree = "<group>"; };
+		893EF2C11CFF1A3E00AC10C6 /* DZHMarketDataDecompression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DZHMarketDataDecompression.m; path = Library/DZHMarketDataDecompression/DZHMarketDataDecompression.m; sourceTree = "<group>"; };
 		897B46841CE37D6D004B8760 /* Hayate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hayate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		897B46871CE37D6D004B8760 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		897B46891CE37D6D004B8760 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -181,6 +187,17 @@
 			path = Library/SSKeychain;
 			sourceTree = "<group>";
 		};
+		893EF2BD1CFF1A3300AC10C6 /* DZHMarketDataDecompression */ = {
+			isa = PBXGroup;
+			children = (
+				893EF2BE1CFF1A3E00AC10C6 /* dzhbitstream.c */,
+				893EF2BF1CFF1A3E00AC10C6 /* dzhbitstream.h */,
+				893EF2C01CFF1A3E00AC10C6 /* DZHMarketDataDecompression.h */,
+				893EF2C11CFF1A3E00AC10C6 /* DZHMarketDataDecompression.m */,
+			);
+			name = DZHMarketDataDecompression;
+			sourceTree = "<group>";
+		};
 		897B467B1CE37D6D004B8760 = {
 			isa = PBXGroup;
 			children = (
@@ -243,6 +260,7 @@
 		897B46B91CE37DEC004B8760 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				893EF2BD1CFF1A3300AC10C6 /* DZHMarketDataDecompression */,
 				4F0C88A41CF8335600276995 /* GCDAsyncSocket */,
 				892749ED1CEB55F2006B311C /* SSKeychain */,
 				897B46BC1CE37E29004B8760 /* AFNetworking */,
@@ -434,10 +452,12 @@
 				897B46D51CE37E29004B8760 /* AFURLConnectionOperation.m in Sources */,
 				4F0C88AB1CF849A100276995 /* HayateSocketTransceiver.swift in Sources */,
 				897B46D41CE37E29004B8760 /* AFSecurityPolicy.m in Sources */,
+				893EF2C31CFF1A3E00AC10C6 /* DZHMarketDataDecompression.m in Sources */,
 				892749E71CEB55BA006B311C /* HayateGlobal.swift in Sources */,
 				897B46D01CE37E29004B8760 /* AFHTTPRequestOperation.m in Sources */,
 				897B46DA1CE37E6B004B8760 /* DrawingBase.swift in Sources */,
 				897B46D81CE37E29004B8760 /* AFURLSessionManager.m in Sources */,
+				893EF2C21CFF1A3E00AC10C6 /* dzhbitstream.c in Sources */,
 				4FF1ED6C1CF92CA6009C9483 /* HayateSocketManager.swift in Sources */,
 				4F4D60E11CEC17670050FD75 /* HayateExtension.swift in Sources */,
 				4FF1ED6E1CF99F86009C9483 /* HayateSocketModelBase.swift in Sources */,

@@ -5,3 +5,4 @@
 #import "AFNetworking.h"
 #import "SSKeychain.h"
 #import "GCDAsyncSocket.h"
+#import "DZHMarketDataDecompression.h"
