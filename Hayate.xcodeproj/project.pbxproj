@@ -190,8 +190,8 @@
 		893EF2BD1CFF1A3300AC10C6 /* DZHMarketDataDecompression */ = {
 			isa = PBXGroup;
 			children = (
-				893EF2BE1CFF1A3E00AC10C6 /* dzhbitstream.c */,
 				893EF2BF1CFF1A3E00AC10C6 /* dzhbitstream.h */,
+				893EF2BE1CFF1A3E00AC10C6 /* dzhbitstream.c */,
 				893EF2C01CFF1A3E00AC10C6 /* DZHMarketDataDecompression.h */,
 				893EF2C11CFF1A3E00AC10C6 /* DZHMarketDataDecompression.m */,
 			);
