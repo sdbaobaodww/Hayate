@@ -513,152 +513,145 @@ unsigned short ExpandMinData(const JAVA_HEAD* pCmdHead, JAVA_HEAD* pResultHead, 
 	return nRet;
 }
 
-unsigned short NewExpandMinData(const JAVA_HEAD* pCmdHead, JAVA_HEAD* pResultHead, unsigned short* nBufSize, unsigned short *minTotalNum,MARKETTIME** ppMarketTime)
+unsigned short NewExpandMinData(const char* source, unsigned short sourceLength, char* pResultHead, unsigned short* nBufSize, unsigned short *minTotalNum,MARKETTIME** ppMarketTime)
 {
-	unsigned short nRet = 0;
-	unsigned short nSum = 0;
-
-	if (pCmdHead->type==2942 && (pCmdHead->attrs&0x0002) && pCmdHead->length > sizeof(JAVA_NEWZSHEADDATA)+sizeof(MINCPSHEAD)+sizeof(MARKETTIME))
-	{
-		JAVA_NEWZSHEADDATA* pZsHead = (JAVA_NEWZSHEADDATA*)(pCmdHead+1);
-		MINCPSHEAD* pCpsHead = (MINCPSHEAD*)(pZsHead+1);
-		MARKETTIME* pMarketTime = (MARKETTIME*)(pCpsHead+1);
-		*ppMarketTime = pMarketTime;
-		char*	pData = (char*)pZsHead+sizeof(JAVA_NEWZSHEADDATA)+sizeof(MINCPSHEAD)+pCpsHead->m_nExchangeNum;
-		int		nDataLen = pCmdHead->length-sizeof(JAVA_NEWZSHEADDATA)-sizeof(MINCPSHEAD)-pCpsHead->m_nExchangeNum;
-
-		int	nCellLen = pZsHead->m_nTag?sizeof(FUTUREMMINUTE):sizeof(MMINUTE);
-		if (*nBufSize >= sizeof(JAVA_HEAD)+sizeof(JAVA_NEWZSHEADDATA)+nCellLen*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum))
-		{
-			unsigned int dwTmpVal;
-			unsigned short i;
-			SIMPLEBITSTREAM stream;
-			unsigned short  pTimePos[8];//‰∫§ÊòìÊó∂Èó¥ÊÆµ‰∏ç‰ºöË∂ÖËø?‰∏?			for (i = 0; i < pMarketTime->m_nNum && i < 8; i++)//
-			int nStatus = 0;
-
-			JAVA_NEWZSHEADDATA* pResZsHead = (JAVA_NEWZSHEADDATA*)(pResultHead+1);
-			/////////////
-			const FUTUREMMINUTE* pOldData = &constFutureMINData;
-			FUTUREMMINUTE* pMinBuf = (FUTUREMMINUTE*)(pResZsHead+1);
-
-			InitialBitStream(&stream, (unsigned char*)pData, nDataLen);
-
-			pResultHead->type = pCmdHead->type;
-			pResultHead->attrs = 0;
-			pResultHead->length = sizeof(JAVA_NEWZSHEADDATA)+nCellLen*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum);
-			*pResZsHead = *pZsHead;
-
-			for (i = 0; i < pMarketTime->m_nNum && i < 8; i++)//
-			{
-				if (pMarketTime->m_TradeTime[i].m_wEnd < pMarketTime->m_TradeTime[i].m_wOpen)//Ê≥®ÊÑèÂ¶ÇÊûúÊòØË∑®Â§©‰∫ÜÈÇ£‰πàÂä?4Â∞èÊó∂
-				{
-					pTimePos[i] = (pMarketTime->m_TradeTime[i].m_wEnd/100+24-pMarketTime->m_TradeTime[i].m_wOpen/100)*60+pMarketTime->m_TradeTime[i].m_wEnd%100-pMarketTime->m_TradeTime[i].m_wOpen%100;
-				}
-				else
-				{
-					pTimePos[i] = (pMarketTime->m_TradeTime[i].m_wEnd/100-pMarketTime->m_TradeTime[i].m_wOpen/100)*60+pMarketTime->m_TradeTime[i].m_wEnd%100-pMarketTime->m_TradeTime[i].m_wOpen%100;
-				}
-                nSum += pTimePos[i] / pCpsHead->m_nMinInterval;
-				if (i)
-				{
-					pTimePos[i] += pTimePos[i-1];
-				}
-				else
-				{
-					pTimePos[i]++;
-				}
-			}
+    unsigned short nRet = 0;
+    unsigned short nSum = 0;
+    
+    JAVA_NEWZSHEADDATA* pZsHead = (JAVA_NEWZSHEADDATA*)source;
+    MINCPSHEAD* pCpsHead = (MINCPSHEAD*)(pZsHead+1);
+    MARKETTIME* pMarketTime = (MARKETTIME*)(pCpsHead+1);
+    *ppMarketTime = pMarketTime;
+    char*	pData = (char*)pZsHead+sizeof(JAVA_NEWZSHEADDATA)+sizeof(MINCPSHEAD)+pCpsHead->m_nExchangeNum;
+    int		nDataLen = sourceLength-sizeof(JAVA_NEWZSHEADDATA)-sizeof(MINCPSHEAD)-pCpsHead->m_nExchangeNum;
+    
+    int	nCellLen = pZsHead->m_nTag?sizeof(FUTUREMMINUTE):sizeof(MMINUTE);
+    if (*nBufSize >= sizeof(JAVA_HEAD)+sizeof(JAVA_NEWZSHEADDATA)+nCellLen*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum))
+    {
+        unsigned int dwTmpVal;
+        unsigned short i;
+        SIMPLEBITSTREAM stream;
+        unsigned short  pTimePos[8];//‰∫§ÊòìÊó∂Èó¥ÊÆµ‰∏ç‰ºöË∂ÖËø?‰∏?			for (i = 0; i < pMarketTime->m_nNum && i < 8; i++)//
+        int nStatus = 0;
+        
+        JAVA_NEWZSHEADDATA* pResZsHead = (JAVA_NEWZSHEADDATA*)pResultHead;
+        /////////////
+        const FUTUREMMINUTE* pOldData = &constFutureMINData;
+        FUTUREMMINUTE* pMinBuf = (FUTUREMMINUTE*)(pResZsHead+1);
+        
+        InitialBitStream(&stream, (unsigned char*)pData, nDataLen);
+        *nBufSize = sizeof(JAVA_NEWZSHEADDATA)+nCellLen*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum);
+        *pResZsHead = *pZsHead;
+        
+        for (i = 0; i < pMarketTime->m_nNum && i < 8; i++)//
+        {
+            if (pMarketTime->m_TradeTime[i].m_wEnd < pMarketTime->m_TradeTime[i].m_wOpen)//Ê≥®ÊÑèÂ¶ÇÊûúÊòØË∑®Â§©‰∫ÜÈÇ£‰πàÂä?4Â∞èÊó∂
+            {
+                pTimePos[i] = (pMarketTime->m_TradeTime[i].m_wEnd/100+24-pMarketTime->m_TradeTime[i].m_wOpen/100)*60+pMarketTime->m_TradeTime[i].m_wEnd%100-pMarketTime->m_TradeTime[i].m_wOpen%100;
+            }
+            else
+            {
+                pTimePos[i] = (pMarketTime->m_TradeTime[i].m_wEnd/100-pMarketTime->m_TradeTime[i].m_wOpen/100)*60+pMarketTime->m_TradeTime[i].m_wEnd%100-pMarketTime->m_TradeTime[i].m_wOpen%100;
+            }
+            nSum += pTimePos[i] / pCpsHead->m_nMinInterval;
+            if (i)
+            {
+                pTimePos[i] += pTimePos[i-1];
+            }
+            else
+            {
+                pTimePos[i]++;
+            }
+        }
+        
+        *minTotalNum = nSum+1;
+        
+        for(i=0; i<pCpsHead->m_nCompressNum; i++)
+        {
+            pMinBuf->m_time = GetZsTime (i*pCpsHead->m_nMinInterval, pMarketTime, pTimePos);
             
-            *minTotalNum = nSum+1;
+            SETSIMPLEBITCODE(&stream, ZSpriceCode);
+            dwTmpVal = DecodeData(&stream, pOldData->m_dwPrice, 0);
+            if ((nStatus = GetStatus(&stream)))
+            {
+                printf("%s", GetStatusDesc(nStatus));
+                return 0;
+            }
+            pMinBuf->m_dwPrice = dwTmpVal;
             
-			for(i=0; i<pCpsHead->m_nCompressNum; i++)
-			{
-				pMinBuf->m_time = GetZsTime (i*pCpsHead->m_nMinInterval, pMarketTime, pTimePos);
-
-				SETSIMPLEBITCODE(&stream, ZSpriceCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwPrice, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pMinBuf->m_dwPrice = dwTmpVal;
-
-				SETSIMPLEBITCODE(&stream, ZSvolumeCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwVolume, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pMinBuf->m_dwVolume = dwTmpVal;
-
-				SETSIMPLEBITCODE(&stream, ZSpriceCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwAmount, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pMinBuf->m_dwAmount = dwTmpVal;
-
-				if(pZsHead->m_nTag)
-				{
-					dwTmpVal = DecodeData(&stream, pOldData->m_dwOpenInterest, 0);
-					if ((nStatus = GetStatus(&stream)))
-					{
-						printf("%s", GetStatusDesc(nStatus));
-						return 0;
-					}
-					pMinBuf->m_dwOpenInterest = dwTmpVal;
-					pOldData = pMinBuf++;
-				}
-				else
-				{
-					pOldData = pMinBuf;
-					pMinBuf = (FUTUREMMINUTE*)((char*)pMinBuf+sizeof(MMINUTE));
-				}
-
-				nRet++;
-			}
-
-			if (pCpsHead->m_nUnCompressNum && (GetCurPos(&stream)+7)/8 + (nCellLen-sizeof(unsigned int))*pCpsHead->m_nUnCompressNum <= nDataLen)
-			{
-				CPSMIN* pUnData = (CPSMIN*)(pData+nDataLen-(nCellLen-sizeof(unsigned int))*pCpsHead->m_nUnCompressNum);
-				for (i = 0; i < pCpsHead->m_nUnCompressNum; i++)
-				{
-					pMinBuf->m_time = GetZsTime ((pCpsHead->m_nCompressNum+i)*pCpsHead->m_nMinInterval, pMarketTime, pTimePos);
-					pMinBuf->m_dwPrice = pUnData->m_dwPrice;
-					pMinBuf->m_dwVolume = pUnData->m_dwVolume;
-					pMinBuf->m_dwAmount = pUnData->m_dwAmount;
-					if(pZsHead->m_nTag)
-					{
-						CPSFUTUREMIN* pFutureUnData = (CPSFUTUREMIN*)pUnData;
-						pMinBuf->m_dwOpenInterest = pFutureUnData->m_dwOpenInterest;
-						pMinBuf++;
-						pUnData = (CPSMIN*)((char*)pFutureUnData+sizeof(CPSFUTUREMIN));
-					}
-					else
-					{
-						pMinBuf = (FUTUREMMINUTE*)((char*)pMinBuf+sizeof(MMINUTE));
-						pUnData++;
-					}
-
-					nRet++;
-				}
-			}
-
-			//nRet = nNum;
-		}
-		else
-		{
-			*nBufSize = sizeof(JAVA_HEAD)+sizeof(JAVA_NEWZSHEADDATA)+nCellLen*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum);
-		}
-	}
-
-	return nRet;
+            SETSIMPLEBITCODE(&stream, ZSvolumeCode);
+            dwTmpVal = DecodeData(&stream, pOldData->m_dwVolume, 0);
+            if ((nStatus = GetStatus(&stream)))
+            {
+                printf("%s", GetStatusDesc(nStatus));
+                return 0;
+            }
+            pMinBuf->m_dwVolume = dwTmpVal;
+            
+            SETSIMPLEBITCODE(&stream, ZSpriceCode);
+            dwTmpVal = DecodeData(&stream, pOldData->m_dwAmount, 0);
+            if ((nStatus = GetStatus(&stream)))
+            {
+                printf("%s", GetStatusDesc(nStatus));
+                return 0;
+            }
+            pMinBuf->m_dwAmount = dwTmpVal;
+            
+            if(pZsHead->m_nTag)
+            {
+                dwTmpVal = DecodeData(&stream, pOldData->m_dwOpenInterest, 0);
+                if ((nStatus = GetStatus(&stream)))
+                {
+                    printf("%s", GetStatusDesc(nStatus));
+                    return 0;
+                }
+                pMinBuf->m_dwOpenInterest = dwTmpVal;
+                pOldData = pMinBuf++;
+            }
+            else
+            {
+                pOldData = pMinBuf;
+                pMinBuf = (FUTUREMMINUTE*)((char*)pMinBuf+sizeof(MMINUTE));
+            }
+            
+            nRet++;
+        }
+        
+        if (pCpsHead->m_nUnCompressNum && (GetCurPos(&stream)+7)/8 + (nCellLen-sizeof(unsigned int))*pCpsHead->m_nUnCompressNum <= nDataLen)
+        {
+            CPSMIN* pUnData = (CPSMIN*)(pData+nDataLen-(nCellLen-sizeof(unsigned int))*pCpsHead->m_nUnCompressNum);
+            for (i = 0; i < pCpsHead->m_nUnCompressNum; i++)
+            {
+                pMinBuf->m_time = GetZsTime ((pCpsHead->m_nCompressNum+i)*pCpsHead->m_nMinInterval, pMarketTime, pTimePos);
+                pMinBuf->m_dwPrice = pUnData->m_dwPrice;
+                pMinBuf->m_dwVolume = pUnData->m_dwVolume;
+                pMinBuf->m_dwAmount = pUnData->m_dwAmount;
+                if(pZsHead->m_nTag)
+                {
+                    CPSFUTUREMIN* pFutureUnData = (CPSFUTUREMIN*)pUnData;
+                    pMinBuf->m_dwOpenInterest = pFutureUnData->m_dwOpenInterest;
+                    pMinBuf++;
+                    pUnData = (CPSMIN*)((char*)pFutureUnData+sizeof(CPSFUTUREMIN));
+                }
+                else
+                {
+                    pMinBuf = (FUTUREMMINUTE*)((char*)pMinBuf+sizeof(MMINUTE));
+                    pUnData++;
+                }
+                
+                nRet++;
+            }
+        }
+        
+        //nRet = nNum;
+    }
+    else
+    {
+        *nBufSize = sizeof(JAVA_HEAD)+sizeof(JAVA_NEWZSHEADDATA)+nCellLen*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum);
+    }
+    
+    return nRet;
 }
-
 
 /////////////////////
 
@@ -802,327 +795,166 @@ static unsigned int ExpandDayKLDate(SIMPLEBITSTREAM* stream, const unsigned int 
 	return date;
 }
 
-unsigned short ExpandKLineData(const JAVA_HEAD* pCmdHead, JAVA_HEAD* pResultHead, unsigned short* nBufSize)
-{
-	unsigned short nRet = 0;	
-	if (pCmdHead->type==2934 && pCmdHead->length > sizeof(KLINECPSHEAD)+sizeof(unsigned short) && (pCmdHead->attrs&0x0002))
-	{
-		unsigned short	nDataLen = pCmdHead->length-sizeof(unsigned short);
-		unsigned char*	pData = (unsigned char*)((char*)pCmdHead+sizeof(JAVA_HEAD)+sizeof(unsigned short));
-		KLINECPSHEAD* pHead = (KLINECPSHEAD*)pData;
-		MKDATA* pKLineBuf = (MKDATA*)((char*)pResultHead+sizeof(JAVA_HEAD)+sizeof(unsigned short));
-
-		if (sizeof(JAVA_HEAD)+sizeof(unsigned short)+pHead->m_nNum*sizeof(MKDATA) <= *nBufSize)
-		{
-			unsigned short  i;
-			SIMPLEBITSTREAM stream;
-			unsigned int nCircle = 0;
-			unsigned int dwTmpVal = 0;
-			int nStatus = 0;
-			const MKDATA* pOldData = &constKLineData;
-			InitialBitStream(&stream, (unsigned char*)(pData+sizeof(KLINECPSHEAD)), nDataLen-sizeof(KLINECPSHEAD));
-
-			switch (pHead->m_nKLType)
-			{
-			case ktypeMin1:
-				nCircle = 1;
-				break;
-			case ktypeMin5:
-				nCircle = 5;
-				break;
-			case ktypeMin15:
-				nCircle = 15;
-				break;
-			case ktypeMin30:
-				nCircle = 30;
-				break;
-			case ktypeMin60:
-				nCircle = 60;
-				break;
-			case ktypeDay:
-				nCircle = 1;
-				break;
-			case ktypeWeek:
-				nCircle = 7;
-				break;
-			case ktypeMonth:
-				nCircle = 100;
-				break;
-			default:
-				break;
-			}
-
-
-			for(i=0; i<pHead->m_nNum; i++, pKLineBuf++)
-			{
-				//Ëß£ÂéãÊó•Êúü
-				if (pHead->m_nKLType <= ktypeMin60)
-				{
-					// pKLineBuf->m_dwDate = ExpandMinKLDate(stream, pOldData->m_dwDate, nCircle);
-					dwTmpVal = ExpandMinKLDate(&stream, pOldData->m_dwDate, nCircle);
-					if (!(nStatus = GetStatus(&stream))) 
-					{
-						pKLineBuf->m_dwDate = dwTmpVal;
-					}
-					else
-					{
-						printf("%s", GetStatusDesc(nStatus));
-						return 0;
-					}
-				}
-				else
-				{					
-					dwTmpVal = ExpandDayKLDate(&stream, pOldData->m_dwDate, nCircle);
-					if (!(nStatus = GetStatus(&stream)))
-					{
-						pKLineBuf->m_dwDate = dwTmpVal;
-					}
-					else
-					{
-						printf("%s", GetStatusDesc(nStatus));
-						return 0;
-					}
-				}
-				//Ëß£ÂéãKÊï∞ÊçÆÁöÑ‰ª∑Ê†?			
-				SETSIMPLEBITCODE(&stream, KLineOpenpriceCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwClose, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwOpen = dwTmpVal;
-
-				SETSIMPLEBITCODE(&stream, KLinepriceCode);
-				dwTmpVal = DecodeData(&stream, pKLineBuf->m_dwOpen, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwHigh = dwTmpVal;
-
-				dwTmpVal = DecodeData(&stream, pKLineBuf->m_dwOpen, 1);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwLow = dwTmpVal;
-
-				dwTmpVal = DecodeData(&stream, pKLineBuf->m_dwLow, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwClose = dwTmpVal;
-
-				//Ëß£ÂéãKÊï∞ÊçÆÁöÑÊàê‰∫§Èáè
-				SETSIMPLEBITCODE(&stream, KLinevolCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwVolume, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwVolume = dwTmpVal;
-
-				//Ëß£ÂéãKÊï∞ÊçÆÁöÑÊàê‰∫§È¢ù
-				SETSIMPLEBITCODE(&stream, KLamountCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwAmount, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwAmount = dwTmpVal;
-
-				pOldData = pKLineBuf;
-				nRet++;
-			}
-
-			pResultHead->type = pCmdHead->type;
-			pResultHead->attrs = 0;
-			pResultHead->length = sizeof(unsigned short)+sizeof(MKDATA)*nRet;
-			*((unsigned char*)pResultHead+sizeof(JAVA_HEAD)) = *(unsigned char*)&nRet;
-			*((unsigned char*)pResultHead+sizeof(JAVA_HEAD)+1) = *((unsigned char*)&nRet+1);
-		}
-		else
-		{
-			nRet = 0xffff;
-			*nBufSize = sizeof(JAVA_HEAD)+sizeof(unsigned short)+pHead->m_nNum*sizeof(MKDATA);
-		}
-	}
-
-	return nRet;
-}
-
 // 返回的nBufSize为正文长度，不含包头长度
-unsigned short NewExpandKLineData(const JAVA_HEAD* pCmdHead, JAVA_HEAD* pResultHead, unsigned short* nBufSize)
+unsigned short NewExpandKLineData(const char* source, unsigned short sourceLength, char* pResultHead, unsigned short* nBufSize)
 {
 	unsigned short nRet = 0;	
-	if (pCmdHead->type==2944 && pCmdHead->length > sizeof(char)+sizeof(unsigned short)+sizeof(KLINECPSHEAD) && (pCmdHead->attrs&0x0002))
-	{
-		unsigned short	nDataLen = pCmdHead->length-sizeof(char)-sizeof(unsigned short);
-		unsigned char*	pData = (unsigned char*)((char*)pCmdHead+sizeof(JAVA_HEAD)+sizeof(char)+sizeof(unsigned short));
-		char	tag = *(char*)(pCmdHead+1);
-		KLINECPSHEAD* pHead = (KLINECPSHEAD*)pData;
-		FutureMKDATA* pKLineBuf = (FutureMKDATA*)((char*)pResultHead+sizeof(JAVA_HEAD)+sizeof(char)+sizeof(unsigned short));
-
-		int	nCellLen = tag?sizeof(FutureMKDATA):sizeof(MKDATA);
-		if (sizeof(JAVA_HEAD)+sizeof(char)+sizeof(unsigned short)+pHead->m_nNum*nCellLen <= *nBufSize)
-		{
-			unsigned int nCircle = 0;
-			unsigned short  i;
-			SIMPLEBITSTREAM stream;
-			unsigned int dwTmpVal = 0;
-			int nStatus = 0;
-			const FutureMKDATA* pOldData = &constFutureKLine;
-			InitialBitStream(&stream, (unsigned char*)(pData+sizeof(KLINECPSHEAD)), nDataLen-sizeof(KLINECPSHEAD));
-			switch (pHead->m_nKLType)
-			{
-			case ktypeMin1:
-				nCircle = 1;
-				break;
-			case ktypeMin5:
-				nCircle = 5;
-				break;
-			case ktypeMin15:
-				nCircle = 15;
-				break;
-			case ktypeMin30:
-				nCircle = 30;
-				break;
-			case ktypeMin60:
-				nCircle = 60;
-				break;
-			case ktypeDay:
-				nCircle = 1;
-				break;
-			case ktypeWeek:
-				nCircle = 7;
-				break;
-			case ktypeMonth:
-				nCircle = 100;
-				break;
-			default:
-				break;
-			}
-
-			
-			for(i=0; i<pHead->m_nNum; i++)
-			{
-				//Ëß£ÂéãÊó•Êúü
-				if (pHead->m_nKLType <= ktypeMin60)
-				{
-					dwTmpVal = ExpandMinKLDate(&stream, pOldData->m_dwDate, nCircle);
-					if ((nStatus = GetStatus(&stream)))
-					{
-						printf("%s", GetStatusDesc(nStatus));
-						return 0;
-					}
-					pKLineBuf->m_dwDate = dwTmpVal;
-				}
-				else
-				{					
-					dwTmpVal = ExpandDayKLDate(&stream, pOldData->m_dwDate, nCircle);
-					if ((nStatus = GetStatus(&stream)))
-					{
-						printf("%s", GetStatusDesc(nStatus));
-						return 0;
-					}
-					pKLineBuf->m_dwDate = dwTmpVal;
-				}
-				//Ëß£ÂéãKÊï∞ÊçÆÁöÑ‰ª∑Ê†?			
-				SETSIMPLEBITCODE(&stream, KLineOpenpriceCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwClose, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwOpen = dwTmpVal;
-
-				SETSIMPLEBITCODE(&stream, KLinepriceCode);
-
-				dwTmpVal = DecodeData(&stream, pKLineBuf->m_dwOpen, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s",  GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwHigh = dwTmpVal;
-
-				dwTmpVal = DecodeData(&stream, pKLineBuf->m_dwOpen, 1);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwLow = dwTmpVal;
-
-				dwTmpVal = DecodeData(&stream, pKLineBuf->m_dwLow, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwClose = dwTmpVal;
-
-				//Ëß£ÂéãKÊï∞ÊçÆÁöÑÊàê‰∫§Èáè
-				//stream.SETSIMPLEBITCODE(KLinevolCode);
-				SETSIMPLEBITCODE(&stream, KLinevolCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwVolume, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwVolume = dwTmpVal;
-
-				//Ëß£ÂéãKÊï∞ÊçÆÁöÑÊàê‰∫§È¢ù
-				SETSIMPLEBITCODE(&stream, KLamountCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwAmount, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pKLineBuf->m_dwAmount = dwTmpVal;
-
-				if(tag)
-				{
-					dwTmpVal = DecodeData(&stream, pOldData->m_dwOpenInterest, 0);
-					if ((nStatus = GetStatus(&stream)))
-					{
-						printf("%s", GetStatusDesc(nStatus));
-						return nRet;
-					}
-					pKLineBuf->m_dwOpenInterest = dwTmpVal;
-					pOldData = pKLineBuf++;
-				}
-				else
-				{
-					pOldData = pKLineBuf;
-					pKLineBuf = (FutureMKDATA*)((char*)pKLineBuf+sizeof(MKDATA));
-				}
-
-				nRet++;
-			}
-			
-			pResultHead->type = pCmdHead->type;
-			pResultHead->attrs = 0;
-			pResultHead->length = sizeof(char)+sizeof(unsigned short)+nCellLen*nRet;
-			*((char*)pResultHead+sizeof(JAVA_HEAD)) = tag;
-			*((unsigned char*)pResultHead+sizeof(JAVA_HEAD)+1) = *(unsigned char*)&nRet;
-			*((unsigned char*)pResultHead+sizeof(JAVA_HEAD)+2) = *((unsigned char*)&nRet+1);
-		}
-		else
-		{
-			*nBufSize = sizeof(JAVA_HEAD)+sizeof(char)+sizeof(unsigned short)+pHead->m_nNum*nCellLen;
-		}
-	}
+    unsigned short	nDataLen = sourceLength-sizeof(char)-sizeof(unsigned short);
+    unsigned char*	pData = (unsigned char*)(source+sizeof(char)+sizeof(unsigned short));
+    char	tag = *(char*)source;
+    KLINECPSHEAD* pHead = (KLINECPSHEAD*)pData;
+    FutureMKDATA* pKLineBuf = (FutureMKDATA*)((char*)pResultHead+sizeof(char)+sizeof(unsigned short));
+    
+    int	nCellLen = tag?sizeof(FutureMKDATA):sizeof(MKDATA);
+    if (sizeof(char)+sizeof(unsigned short)+pHead->m_nNum*nCellLen <= *nBufSize)
+    {
+        unsigned int nCircle = 0;
+        unsigned short  i;
+        SIMPLEBITSTREAM stream;
+        unsigned int dwTmpVal = 0;
+        int nStatus = 0;
+        const FutureMKDATA* pOldData = &constFutureKLine;
+        InitialBitStream(&stream, (unsigned char*)(pData+sizeof(KLINECPSHEAD)), nDataLen-sizeof(KLINECPSHEAD));
+        switch (pHead->m_nKLType)
+        {
+            case ktypeMin1:
+                nCircle = 1;
+                break;
+            case ktypeMin5:
+                nCircle = 5;
+                break;
+            case ktypeMin15:
+                nCircle = 15;
+                break;
+            case ktypeMin30:
+                nCircle = 30;
+                break;
+            case ktypeMin60:
+                nCircle = 60;
+                break;
+            case ktypeDay:
+                nCircle = 1;
+                break;
+            case ktypeWeek:
+                nCircle = 7;
+                break;
+            case ktypeMonth:
+                nCircle = 100;
+                break;
+            default:
+                break;
+        }
+        
+        
+        for(i=0; i<pHead->m_nNum; i++)
+        {
+            //Ëß£ÂéãÊó•Êúü
+            if (pHead->m_nKLType <= ktypeMin60)
+            {
+                dwTmpVal = ExpandMinKLDate(&stream, pOldData->m_dwDate, nCircle);
+                if ((nStatus = GetStatus(&stream)))
+                {
+                    printf("%s", GetStatusDesc(nStatus));
+                    return 0;
+                }
+                pKLineBuf->m_dwDate = dwTmpVal;
+            }
+            else
+            {
+                dwTmpVal = ExpandDayKLDate(&stream, pOldData->m_dwDate, nCircle);
+                if ((nStatus = GetStatus(&stream)))
+                {
+                    printf("%s", GetStatusDesc(nStatus));
+                    return 0;
+                }
+                pKLineBuf->m_dwDate = dwTmpVal;
+            }
+            //Ëß£ÂéãKÊï∞ÊçÆÁöÑ‰ª∑Ê†?
+            SETSIMPLEBITCODE(&stream, KLineOpenpriceCode);
+            dwTmpVal = DecodeData(&stream, pOldData->m_dwClose, 0);
+            if ((nStatus = GetStatus(&stream)))
+            {
+                printf("%s", GetStatusDesc(nStatus));
+                return 0;
+            }
+            pKLineBuf->m_dwOpen = dwTmpVal;
+            
+            SETSIMPLEBITCODE(&stream, KLinepriceCode);
+            
+            dwTmpVal = DecodeData(&stream, pKLineBuf->m_dwOpen, 0);
+            if ((nStatus = GetStatus(&stream)))
+            {
+                printf("%s",  GetStatusDesc(nStatus));
+                return 0;
+            }
+            pKLineBuf->m_dwHigh = dwTmpVal;
+            
+            dwTmpVal = DecodeData(&stream, pKLineBuf->m_dwOpen, 1);
+            if ((nStatus = GetStatus(&stream)))
+            {
+                printf("%s", GetStatusDesc(nStatus));
+                return 0;
+            }
+            pKLineBuf->m_dwLow = dwTmpVal;
+            
+            dwTmpVal = DecodeData(&stream, pKLineBuf->m_dwLow, 0);
+            if ((nStatus = GetStatus(&stream)))
+            {
+                printf("%s", GetStatusDesc(nStatus));
+                return 0;
+            }
+            pKLineBuf->m_dwClose = dwTmpVal;
+            
+            //Ëß£ÂéãKÊï∞ÊçÆÁöÑÊàê‰∫§Èáè
+            //stream.SETSIMPLEBITCODE(KLinevolCode);
+            SETSIMPLEBITCODE(&stream, KLinevolCode);
+            dwTmpVal = DecodeData(&stream, pOldData->m_dwVolume, 0);
+            if ((nStatus = GetStatus(&stream)))
+            {
+                printf("%s", GetStatusDesc(nStatus));
+                return 0;
+            }
+            pKLineBuf->m_dwVolume = dwTmpVal;
+            
+            //Ëß£ÂéãKÊï∞ÊçÆÁöÑÊàê‰∫§È¢ù
+            SETSIMPLEBITCODE(&stream, KLamountCode);
+            dwTmpVal = DecodeData(&stream, pOldData->m_dwAmount, 0);
+            if ((nStatus = GetStatus(&stream)))
+            {
+                printf("%s", GetStatusDesc(nStatus));
+                return 0;
+            }
+            pKLineBuf->m_dwAmount = dwTmpVal;
+            
+            if(tag)
+            {
+                dwTmpVal = DecodeData(&stream, pOldData->m_dwOpenInterest, 0);
+                if ((nStatus = GetStatus(&stream)))
+                {
+                    printf("%s", GetStatusDesc(nStatus));
+                    return nRet;
+                }
+                pKLineBuf->m_dwOpenInterest = dwTmpVal;
+                pOldData = pKLineBuf++;
+            }
+            else
+            {
+                pOldData = pKLineBuf;
+                pKLineBuf = (FutureMKDATA*)((char*)pKLineBuf+sizeof(MKDATA));
+            }
+            
+            nRet++;
+        }
+        
+        *nBufSize = sizeof(char)+sizeof(unsigned short)+nCellLen*nRet;
+        *((char*)pResultHead) = tag;
+        *((unsigned char*)pResultHead+1) = *(unsigned char*)&nRet;
+        *((unsigned char*)pResultHead+2) = *((unsigned char*)&nRet+1);
+    }
+    else
+    {
+        *nBufSize = sizeof(char)+sizeof(unsigned short)+pHead->m_nNum*nCellLen;
+    }
 
 	return nRet;
 }

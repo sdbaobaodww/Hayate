@@ -54,6 +54,8 @@ protocol HayatePackageHeader {
     static func minSize() -> Int//包头最小长度
     
     static func maxSize() -> Int//包头最大长度
+    
+    var headerSize: Int {get}//包头最终的长度
 }
 
 //行情数据包头
@@ -63,6 +65,7 @@ public struct DZH_DATAHEAD: HayatePackageHeader {
     public var type: CUnsignedShort
     public var attrs: CUnsignedShort
     public var length: UInt
+    public var headerSize: Int = 7
     
     init() {
         self.init(123, 0, 0, 0)
@@ -99,6 +102,7 @@ public struct DZH_DATAHEAD: HayatePackageHeader {
         data.readValue(&attrs, size: sizeof(CShort), pos: pos)
         let attr = (attrs & 0x8) >> 3 //取长度扩充位，当置位时，用int表示数据长度；否则用short表示长度；
         let byteSize = attr == 1 ? sizeof(Int32) : sizeof(CShort)
+        headerSize = 5 + byteSize
         data.readValue(&length, size: byteSize, pos: pos)//读取包的数据长度
         return Int(length)
     }

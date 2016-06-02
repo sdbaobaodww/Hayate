@@ -174,3 +174,149 @@ public class DZHResponsePackage2963: DZHResponseDataParser {
         }
     }
 }
+
+public class DZHRequestPackage2942: DZHMarketRequestPackage {
+    var code: NSString
+    var position: CShort
+    
+    init(code: NSString, position: CShort) {
+        self.code = code
+        self.position = position
+        super.init(header: DZH_DATAHEAD(HayateTagCreator.sharedInstance.tag(), 2942, 2, 0), parser: DZHResponsePackage2942())
+    }
+    
+    override func serializeBody() -> NSData? {
+        let body: NSMutableData = NSMutableData()
+        body.writeValue(code)
+        body.writeValue(position)
+        return body
+    }
+}
+
+public class DZHResponsePackage2942Item: NSObject {
+    var time: Int = 0 //时间
+    var price: Int = 0//最新价
+    var volume: Int = 0//成交量
+    var averagePrice: Int = 0//均价
+    var holdVolume: Int = 0//持仓量
+    
+    func deSerialize(data: NSData, pos: UnsafeMutablePointer<Int>) {
+        let byteSize = sizeof(CInt)
+        data.readValue(&time, size: byteSize, pos: pos)
+        data.readValue(&price, size: byteSize, pos: pos)
+        data.readValue(&volume, size: byteSize, pos: pos)
+        data.readValue(&averagePrice, size: byteSize, pos: pos)
+        data.readValue(&holdVolume, size: byteSize, pos: pos)
+    }
+}
+
+public class DZHResponsePackage2942: DZHResponseDataParser {
+    var marketTime: NSMutableString = NSMutableString()//交易时间段
+    var totalNum: CUnsignedShort = 0 //总分时点个数
+    var holdTag: CChar = 0 //持仓标记
+    var bombCount: CChar = 0 //信息地雷数
+    var starVal: CChar = 0 //五星评级
+    var position: CShort = 0 //数据位置
+    var items: NSMutableArray = NSMutableArray()
+    
+    override public func deSerialize(body: NSData?) {
+        if body != nil {
+            let attrs = (header as! DZH_DATAHEAD).attrs
+            let depressData: NSData
+            if (attrs >> 1 & 0x1) == 1 {
+                depressData = DZHMarketDataDecompression.expandMinLineData(body, marketTime: marketTime, minLineTotalNum: &totalNum)
+            }else{
+                depressData = body!
+            }
+            var pos: Int = 0
+            depressData.readValue(&holdTag, size: sizeof(CChar), pos: &pos)
+            depressData.readValue(&bombCount, size: sizeof(CChar), pos: &pos)
+            depressData.readValue(&starVal, size: sizeof(CChar), pos: &pos)
+            depressData.readValue(&position, size: sizeof(CShort), pos: &pos)
+            var itemCount = 0
+            depressData.readValue(&itemCount, size: sizeof(CShort), pos: &pos)
+            let arr: NSMutableArray = NSMutableArray.init(capacity: itemCount)
+            for _ in 0 ..< itemCount {
+                let item = DZHResponsePackage2942Item()
+                item.deSerialize(depressData, pos: &pos)
+                arr.addObject(item)
+            }
+            items = arr
+        }
+    }
+}
+
+public class DZHRequestPackage2944: DZHMarketRequestPackage {
+    var code: NSString
+    var type: CChar
+    var endDate: CInt
+    var reqNumber: CShort
+    
+    init(code: NSString, type: CChar, endDate: CInt, reqNumber: CShort) {
+        self.code = code
+        self.type = type
+        self.endDate = endDate
+        self.reqNumber = reqNumber
+        super.init(header: DZH_DATAHEAD(HayateTagCreator.sharedInstance.tag(), 2944, 2, 0), parser: DZHResponsePackage2944())
+    }
+    
+    override func serializeBody() -> NSData? {
+        let body: NSMutableData = NSMutableData()
+        body.writeValue(code)
+        body.writeValue(type)
+        body.writeValue(endDate)
+        body.writeValue(reqNumber)
+        return body
+    }
+}
+
+public class DZHResponsePackage2944Item: NSObject {
+    var date: CInt = 0 //日期
+    var open: CInt = 0//开盘价
+    var high: CInt = 0//最高价
+    var low: CInt = 0//最低价
+    var close: CInt = 0//收盘价
+    var volume: Int64 = 0//成交量
+    var turnover: CInt = 0//成交额
+    var holdVolume: CInt = 0//持仓量
+    
+    func deSerialize(data: NSData, pos: UnsafeMutablePointer<Int>) {
+        let byteSize = sizeof(CInt)
+        data.readValue(&date, size: byteSize, pos: pos)
+        data.readValue(&open, size: byteSize, pos: pos)
+        data.readValue(&high, size: byteSize, pos: pos)
+        data.readValue(&low, size: byteSize, pos: pos)
+        data.readValue(&close, size: byteSize, pos: pos)
+        data.readValue(&volume, size: byteSize, pos: pos)
+        data.readValue(&turnover, size: byteSize, pos: pos)
+        data.readValue(&holdVolume, size: byteSize, pos: pos)
+    }
+}
+
+public class DZHResponsePackage2944: DZHResponseDataParser {
+    var holdTag: CChar = 0 //持仓标记
+    var items: NSMutableArray = NSMutableArray()
+    
+    override public func deSerialize(body: NSData?) {
+        if body != nil {
+            let attrs = (header as! DZH_DATAHEAD).attrs
+            let depressData: NSData
+            if (attrs >> 1 & 0x1) == 1 {
+                depressData = DZHMarketDataDecompression.expandKLineData(body)
+            }else{
+                depressData = body!
+            }
+            var pos: Int = 0
+            depressData.readValue(&holdTag, size: sizeof(CChar), pos: &pos)
+            var itemCount = 0
+            depressData.readValue(&itemCount, size: sizeof(CShort), pos: &pos)
+            let arr: NSMutableArray = NSMutableArray.init(capacity: itemCount)
+            for _ in 0 ..< itemCount {
+                let item = DZHResponsePackage2944Item()
+                item.deSerialize(depressData, pos: &pos)
+                arr.addObject(item)
+            }
+            items = arr
+        }
+    }
+}

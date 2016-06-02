@@ -191,11 +191,10 @@ typedef struct
 
 #pragma pack()
 
-unsigned short ExpandMinData(const JAVA_HEAD* pCmdHead, JAVA_HEAD* pResultHead, unsigned short* nBufSize);
-unsigned short NewExpandMinData(const JAVA_HEAD* pCmdHead, JAVA_HEAD* pResultHead, unsigned short* nBufSize, unsigned short *minTotalNum, MARKETTIME** ppMarketTime);
+unsigned short NewExpandMinData(const char* source, unsigned short sourceLength, char* pResultHead, unsigned short* nBufSize, unsigned short *minTotalNum,MARKETTIME** ppMarketTime);
 
-unsigned short ExpandKLineData(const JAVA_HEAD* pCmdHead, JAVA_HEAD* pResultHead, unsigned short* nBufSize);
-unsigned short NewExpandKLineData(const JAVA_HEAD* pCmdHead, JAVA_HEAD* pResultHead, unsigned short* nBufSize);
+unsigned short NewExpandKLineData(const char* source, unsigned short sourceLength, char* pResultHead, unsigned short* nBufSize);
+
 unsigned short ExpandBSData(const JAVA_HEAD* pCmdHead, JAVA_HEAD* pResultHead, unsigned short* nBufSize);
 
 #endif //_BITSTREAM_H_INCLUDE
