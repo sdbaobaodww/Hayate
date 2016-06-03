@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias ResponseComplete = (status: ResponseStatus) -> Void
+public typealias ResponseComplete = (status: ResponseStatus, package: HayateRequestPackage) -> Void
 
 //请求包状态
 public enum RequestStatus {
@@ -142,7 +142,7 @@ public class HayateRequestPackage: NSObject {
     //发送请求
     final func sendRequest(completion: ResponseComplete) {
         self.responseCompletion = completion
-        SchedulingServerManager.sharedInstance.socketManager.addRequestPackage(self)
+        AppDelegate.theMarketSocket().addRequestPackage(self)
     }
     
     //对数据进行序列化，生成二进制数据
@@ -235,7 +235,7 @@ public class DZHMarketRequestGroupPackage: HayateRequestPackage {
             if package.isMatchPackage(responseHeader) {
                 package.receiveData(responseHeader, data: data)
                 if package.isFinished(){//接收结束
-                    package.responseCompletion?(status: ResponseStatus.Success)
+                    package.responseCompletion?(status: ResponseStatus.Success, package:package)
                 }
             }
         }

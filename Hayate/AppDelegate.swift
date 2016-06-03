@@ -10,42 +10,40 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
+    let socketMonitor: HayateSocketMonitor = HayateSocketMonitor()
+    let marketSocketHeartBeat: HayateSocketHeartBeat = HayateSocketHeartBeat()
+    var marketSocket: HayateMarketSocketManager?
+    var serverManager: SchedulingServerManager?
     var window: UIWindow?
-    var socketMonitor: HayateSocketMonitor?
-    var socketHeartBeat: HayateSocketHeartBeat = HayateSocketHeartBeat()
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.didConnectToServer), name: HayateConnectSuccessNotification, object: nil)
         
-        socketMonitor = HayateSocketMonitor()
-        let serverManager = SchedulingServerManager.sharedInstance
-        serverManager.createSocket()
+        marketSocket = HayateMarketSocketManager(monitor: socketMonitor)
+        serverManager = SchedulingServerManager(socketManager: marketSocket!)
+        serverManager!.createSocket()
         
         return true
     }
     
-    class func theAppDelegate() -> AppDelegate {
-        return ((UIApplication.sharedApplication().delegate) as! AppDelegate)
-    }
-    
     func didConnectToServer() {
         let group = DZHMarketRequestGroupPackage()
-        let request2939 = DZHRequestPackage2939(code:"300213")
-        request2939.responseCompletion = { (status) in
+        let code: NSString = "SZ300213"
+        let request2939 = DZHRequestPackage2939(code: code)
+        request2939.responseCompletion = { (status, package) in
             print("2939请求结束 \(status)")
         }
-        let request2940 = DZHRequestPackage2940(code:"300213")
-        request2940.responseCompletion = { (status) in
+        let request2940 = DZHRequestPackage2940(code: code)
+        request2940.responseCompletion = { (status, package) in
             print("2940请求结束 \(status)")
         }
-        let request2942 = DZHRequestPackage2942(code:"300128", position: 0)
-        request2942.responseCompletion = { (status) in
+        let request2942 = DZHRequestPackage2942(code: code, position: 0)
+        request2942.responseCompletion = { (status, package) in
             print("2942请求结束 \(status)")
         }
-        let request2944 = DZHRequestPackage2944(code: "300128", type: 7, endDate: 0, reqNumber: 250)
-        request2944.responseCompletion = { (status) in
+        let request2944 = DZHRequestPackage2944(code: code, type: 7, endDate: 0, reqNumber: 250)
+        request2944.responseCompletion = { (status, package) in
             print("2944请求结束 \(status)")
         }
         group.addPackage(request2939)
@@ -53,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         group.addPackage(request2942)
         group.addPackage(request2944)
         
-        group.sendRequest { (status) in
+        group.sendRequest { (status, package) in
             print("组包请求结束 \(status)")
         }
     }
@@ -81,5 +79,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+}
+
+extension AppDelegate {
+    
+    class func theAppDelegate() -> AppDelegate {
+        return ((UIApplication.sharedApplication().delegate) as! AppDelegate)
+    }
+    
+    class func theMarketSocket() -> HayateMarketSocketManager {
+        return self.theAppDelegate().marketSocket!
+    }
+    
 }
 

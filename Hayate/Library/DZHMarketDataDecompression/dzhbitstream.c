@@ -388,131 +388,6 @@ static unsigned int GetZsTime (unsigned short pos, const MARKETTIME* pMarketTime
 	return nRetTime;
 }
 
-
-unsigned short ExpandMinData(const JAVA_HEAD* pCmdHead, JAVA_HEAD* pResultHead, unsigned short* nBufSize)
-{
-	unsigned short nRet = 0;	
-
-	if (pCmdHead->type==2201 && (pCmdHead->attrs&0x0002) && pCmdHead->length > sizeof(JAVA_ZSHEADDATA)+sizeof(MINCPSHEAD)+sizeof(MARKETTIME))
-	{
-		JAVA_ZSHEADDATA* pZsHead = (JAVA_ZSHEADDATA*)(pCmdHead+1);
-		MINCPSHEAD* pCpsHead = (MINCPSHEAD*)(pZsHead+1);
-		MARKETTIME* pMarketTime = (MARKETTIME*)(pCpsHead+1);
-		char*	pData = (char*)pZsHead+sizeof(JAVA_ZSHEADDATA)+sizeof(MINCPSHEAD)+pCpsHead->m_nExchangeNum;
-		int		nDataLen = pCmdHead->length-sizeof(JAVA_ZSHEADDATA)-sizeof(MINCPSHEAD)-pCpsHead->m_nExchangeNum;
-
-		if (*nBufSize >= sizeof(JAVA_HEAD)+sizeof(JAVA_ZSHEADDATA)+sizeof(MMINUTE)*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum))
-		{
-			unsigned short i;
-			unsigned int dwTmpVal;
-			SIMPLEBITSTREAM stream;		
-			unsigned short  pTimePos[8];//‰∫§ÊòìÊó∂Èó¥ÊÆµ‰∏ç‰ºöË∂ÖËø?‰∏?			for (i = 0; i < pMarketTime->m_nNum && i < 8; i++)//
-			int nStatus = 0;
-			const MMINUTE* pOldData = &constMINData;			
-			JAVA_ZSHEADDATA* pResZsHead = (JAVA_ZSHEADDATA*)(pResultHead+1);
-			MMINUTE*	pMinBuf = (MMINUTE*)(pResZsHead+1);
-
-			InitialBitStream(&stream, (unsigned char*)pData, nDataLen);
-
-			pResultHead->cSparate = pCmdHead->cSparate;
-			pResultHead->type = pCmdHead->type;
-			pResultHead->attrs = 0;
-			pResultHead->length = sizeof(JAVA_ZSHEADDATA)+sizeof(MMINUTE)*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum);
-			*pResZsHead = *pZsHead;
-
-			for (i = 0; i < pMarketTime->m_nNum && i < 8; i++)//
-			{
-				if (pMarketTime->m_TradeTime[i].m_wEnd < pMarketTime->m_TradeTime[i].m_wOpen)//Ê≥®ÊÑèÂ¶ÇÊûúÊòØË∑®Â§©‰∫ÜÈÇ£‰πàÂä?4Â∞èÊó∂
-				{
-					pTimePos[i] = (pMarketTime->m_TradeTime[i].m_wEnd/100+24-pMarketTime->m_TradeTime[i].m_wOpen/100)*60+pMarketTime->m_TradeTime[i].m_wEnd%100-pMarketTime->m_TradeTime[i].m_wOpen%100;
-				}
-				else
-				{
-					pTimePos[i] = (pMarketTime->m_TradeTime[i].m_wEnd/100-pMarketTime->m_TradeTime[i].m_wOpen/100)*60+pMarketTime->m_TradeTime[i].m_wEnd%100-pMarketTime->m_TradeTime[i].m_wOpen%100;
-				}
-				if (i)
-				{
-					pTimePos[i] += pTimePos[i-1];
-				}
-				else
-				{
-					pTimePos[i]++;
-				}
-			}	
-			/////////////
-			for(i=0; i<pCpsHead->m_nCompressNum; i++, pMinBuf++)
-			{
-				pMinBuf->m_time = GetZsTime (i*pCpsHead->m_nMinInterval, pMarketTime, pTimePos);
-
-				SETSIMPLEBITCODE(&stream, ZSpriceCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwPrice, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					// printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pMinBuf->m_dwPrice = dwTmpVal;
-
-				SETSIMPLEBITCODE(&stream, ZSvolumeCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwVolume, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					//printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pMinBuf->m_dwVolume = dwTmpVal;
-
-				SETSIMPLEBITCODE(&stream, ZSpriceCode);
-				dwTmpVal = DecodeData(&stream, pOldData->m_dwAmount, 0);
-				if ((nStatus = GetStatus(&stream)))
-				{
-					//printf("%s", GetStatusDesc(nStatus));
-					return 0;
-				}
-				pMinBuf->m_dwAmount = dwTmpVal;
-
-				pOldData = pMinBuf;
-				nRet++;
-			}
-
-			if (pCpsHead->m_nUnCompressNum && (GetCurPos(&stream)+7)/8+sizeof(unsigned int)*pCpsHead->m_nUnCompressNum*3 <= nDataLen)
-			{
-				unsigned int	nValue;
-				unsigned char*	pByte = (unsigned char*)&nValue;
-				unsigned char* pUnData = (unsigned char*)(pData+nDataLen-sizeof(unsigned int)*pCpsHead->m_nUnCompressNum*3);
-				for (i = 0; i < pCpsHead->m_nUnCompressNum; i++, pMinBuf++)
-				{
-					pMinBuf->m_time = GetZsTime ((pCpsHead->m_nCompressNum+i)*pCpsHead->m_nMinInterval, pMarketTime, pTimePos);
-					*(pByte) = *pUnData++;
-					*(pByte+1) = *pUnData++;
-					*(pByte+2) = *pUnData++;
-					*(pByte+3) = *pUnData++;
-					pMinBuf->m_dwPrice = nValue;
-					*(pByte) = *pUnData++;
-					*(pByte+1) = *pUnData++;
-					*(pByte+2) = *pUnData++;
-					*(pByte+3) = *pUnData++;
-					pMinBuf->m_dwVolume = nValue;
-					*(pByte) = *pUnData++;
-					*(pByte+1) = *pUnData++;
-					*(pByte+2) = *pUnData++;
-					*(pByte+3) = *pUnData++;
-					pMinBuf->m_dwAmount = nValue;
-
-					nRet++;
-				}
-			}
-
-		}
-		else
-		{
-			*nBufSize = sizeof(JAVA_HEAD)+sizeof(JAVA_ZSHEADDATA)+sizeof(MMINUTE)*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum);
-		}
-	}
-
-	return nRet;
-}
-
 unsigned short NewExpandMinData(const char* source, unsigned short sourceLength, char* pResultHead, unsigned short* nBufSize, unsigned short *minTotalNum,MARKETTIME** ppMarketTime)
 {
     unsigned short nRet = 0;
@@ -526,7 +401,7 @@ unsigned short NewExpandMinData(const char* source, unsigned short sourceLength,
     int		nDataLen = sourceLength-sizeof(JAVA_NEWZSHEADDATA)-sizeof(MINCPSHEAD)-pCpsHead->m_nExchangeNum;
     
     int	nCellLen = pZsHead->m_nTag?sizeof(FUTUREMMINUTE):sizeof(MMINUTE);
-    if (*nBufSize >= sizeof(JAVA_HEAD)+sizeof(JAVA_NEWZSHEADDATA)+nCellLen*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum))
+    if (*nBufSize >= sizeof(JAVA_NEWZSHEADDATA)+nCellLen*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum))
     {
         unsigned int dwTmpVal;
         unsigned short i;
@@ -647,7 +522,7 @@ unsigned short NewExpandMinData(const char* source, unsigned short sourceLength,
     }
     else
     {
-        *nBufSize = sizeof(JAVA_HEAD)+sizeof(JAVA_NEWZSHEADDATA)+nCellLen*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum);
+        *nBufSize = sizeof(JAVA_NEWZSHEADDATA)+nCellLen*(pCpsHead->m_nCompressNum+pCpsHead->m_nUnCompressNum);
     }
     
     return nRet;

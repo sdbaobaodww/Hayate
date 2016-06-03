@@ -14,18 +14,12 @@ public class SchedulingServerManager : NSObject{
     
     public var package1000: DZHRequestPackage1000?
     var isRequesting: Bool = false
-    var socketManager: HayateMarketSocketManager = HayateMarketSocketManager(monitor: AppDelegate.theAppDelegate().socketMonitor)
-    var httpManager: HayateHttpManager = HayateHttpManager()
+    let socketManager: HayateMarketSocketManager
+    let httpManager: HayateHttpManager = HayateHttpManager()
     
-    public class var sharedInstance: SchedulingServerManager {
-        struct Static {
-            static var onceToken: dispatch_once_t = 0
-            static var instance: SchedulingServerManager? = nil
-        }
-        dispatch_once(&Static.onceToken, { () -> Void in
-            Static.instance = SchedulingServerManager()
-        })
-        return Static.instance!
+    init(socketManager: HayateMarketSocketManager) {
+        self.socketManager = socketManager
+        super.init()
     }
     
     private func cachedAddressesFromDisk() -> Array<NSString>? {

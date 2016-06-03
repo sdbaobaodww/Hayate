@@ -270,7 +270,7 @@ public class DZHRequestPackage2944: DZHMarketRequestPackage {
     }
 }
 
-public class DZHResponsePackage2944Item: NSObject {
+public class DZHResponsePackage2944Item: NSObject,HayateDataCollectionItem {
     var date: CInt = 0 //日期
     var open: CInt = 0//开盘价
     var high: CInt = 0//最高价
@@ -288,8 +288,13 @@ public class DZHResponsePackage2944Item: NSObject {
         data.readValue(&low, size: byteSize, pos: pos)
         data.readValue(&close, size: byteSize, pos: pos)
         data.readValue(&volume, size: byteSize, pos: pos)
+        volume = volume.expand()
         data.readValue(&turnover, size: byteSize, pos: pos)
         data.readValue(&holdVolume, size: byteSize, pos: pos)
+    }
+    
+    func collectionPosition() -> CInt {
+        return date
     }
 }
 
@@ -317,6 +322,52 @@ public class DZHResponsePackage2944: DZHResponseDataParser {
                 arr.addObject(item)
             }
             items = arr
+        }
+    }
+}
+
+protocol HayateDataCollectionItem {
+    
+    func collectionPosition() -> CInt
+}
+
+struct HayateDataCollectionPage {
+    var fromPos: CInt
+    var toPos: CInt
+    var fromIndex: Int
+    var toIndex: Int
+}
+
+public class HayateDataCollection: NSObject {
+    
+    var pages: Array<HayateDataCollectionPage> = []
+    public var datas: NSMutableArray = NSMutableArray()
+    
+    public func addPageData(pageData: NSArray) {
+        if pageData.count > 0 {
+            let pageFromPos = (pageData.firstObject as! HayateDataCollectionItem).collectionPosition()
+            let pageToPos = (pageData.lastObject as! HayateDataCollectionItem).collectionPosition()
+           
+            if datas.count == 0 {
+                datas.addObjectsFromArray(pageData as [AnyObject])
+            }else{
+                let fromPos = (datas.firstObject as! HayateDataCollectionItem).collectionPosition()
+                let toPos = (datas.lastObject as! HayateDataCollectionItem).collectionPosition()
+                
+                if pageFromPos > toPos {//后面添加
+                    datas.addObjectsFromArray(pageData as [AnyObject])
+                }else if pageToPos < fromPos {//前面添加
+                    datas.insertObjects(pageData as [AnyObject], atIndex: 0)
+                }else{//两者相交
+                    for item in datas {
+                        let item = item as! HayateDataCollectionItem
+                        if item.collectionPosition() == pageFromPos {
+                            
+                        }
+                    }
+                }
+            }
+            
         }
     }
 }

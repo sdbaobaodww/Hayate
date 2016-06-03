@@ -207,7 +207,7 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
     
     func setPackageResponseStatus(package: HayateRequestPackage, status: ResponseStatus) {
         if let completion = package.responseCompletion {
-            completion(status: status)//响应状态置为SocketClose
+            completion(status: status, package: package)//响应状态置为SocketClose
         }
     }
     

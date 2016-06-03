@@ -156,3 +156,31 @@ extension NSArray {
     }
 }
 
+extension CInt {
+    public func expand() -> Int64 {
+        let v1: Int64 = Int64((self >> 30) & 0x03)
+        if v1 == 0 {
+            return Int64(self)
+        }else{
+            return Int64(self & 0x3FFFFFFF) << (v1 * 4)
+        }
+    }
+}
+
+extension Int64 {
+    public func expand() -> Int64 {
+        let v1: Int64 = Int64((self >> 30) & 0x03)
+        if v1 == 0 {
+            return self
+        }else{
+            return (self & 0x3FFFFFFF) << (v1 * 4)
+        }
+    }
+}
+
+extension NSMutableArray {
+    public func insertObjects(array: [AnyObject], atIndex index: Int) {
+        self.insertObjects(array, atIndexes: NSIndexSet(indexesInRange: NSMakeRange(index, array.count)))
+    }
+}
+
