@@ -50,10 +50,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         group.addPackage(request2940)
         group.addPackage(request2942)
         group.addPackage(request2944)
-        
-        group.sendRequest { (status, package) in
+        group.responseCompletion = { (status, package) in
             print("组包请求结束 \(status)")
         }
+        
+        marketSocket?.sendRequestPackage(group)
     }
     
     func applicationWillResignActive(application: UIApplication) {

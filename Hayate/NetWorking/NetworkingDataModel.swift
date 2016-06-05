@@ -48,14 +48,14 @@ public class DZHResponsePackage1000: DZHResponseDataParser {
     public var noticeText: NSString? // 公告信息
     public var newVersionNum: NSString? // 新版本号
     public var downloadAddress: NSString? // 下载地址
-    public var isAlertUpdate: Bool? // 是否提醒升级
-    public var isForceUpdate: Bool? // 是否强制升级
-    public var isAlertLogin: Bool? // 是否提示登录
-    public var carrierIP: CChar? // 用户运营商ip   0表示未知；非0表示有效，
-    public var uploadLogInterval: CShort? // 统计信息时间间隔  单位秒,如果为0表示不统计信息
+    public var isAlertUpdate: Bool = false // 是否提醒升级
+    public var isForceUpdate: Bool = false // 是否强制升级
+    public var isAlertLogin: Bool = false // 是否提示登录
+    public var carrierIP: CChar = 0 // 用户运营商ip   0表示未知；非0表示有效，
+    public var uploadLogInterval: CShort = 0 // 统计信息时间间隔  单位秒,如果为0表示不统计信息
     public var updateNotice: NSString? // 升级提示文字
-    public var noticeCRC: CShort? // 公告crc
-    public var noticeType: CChar? // 公告提示类型
+    public var noticeCRC: CShort = 0 // 公告crc
+    public var noticeType: CChar = 0 // 公告提示类型
     public var scheduleAddresses: Array<NSString>? // 调度地址
     public var serverDict: Dictionary<Int32,Array<NSString>>? // 不同服务器地址列表
     
@@ -97,7 +97,7 @@ public class DZHResponsePackage1000: DZHResponseDataParser {
 }
 
 public class DZHRequestPackage2939: DZHMarketRequestPackage {
-    var code: NSString
+    public var code: NSString//代码
     
     init(code: NSString) {
         self.code = code
@@ -118,10 +118,48 @@ public class DZHRequestPackage2939: DZHMarketRequestPackage {
 }
 
 public class DZHResponsePackage2939: DZHResponseDataParser {
+    public var code: NSString?//代码
+    public var name: NSString?//名称
+    public var type: CChar = 0//类型
+    public var presicion: CChar = 0//价格位数
+    public var volumeUnit: CShort = 0//成交量单位
+    public var lastClose: CInt = 0//昨收
+    public var limitUp: CInt = 0//涨停
+    public var limitDown: CInt = 0//跌停
+    public var yposition: CInt = 0//昨日持仓
+    public var ysettlement: CInt = 0//昨结算价
+    public var circulatedCapital: Int64 = 0//流通盘
+    public var totalCapital: Int64 = 0//总股本
+    public var securitiesMargin: CChar = 0//融资融券标记
+    public var eachNumber: CInt = 0//交易量单位,这个主要用于港股的委托使用的交易量，对其它市场该数值和成交量单位相同
+    public var extendType: CChar = 0//证券扩展分类,0无效，1基础三板，2创新三板
     
     override public func deSerialize(body: NSData?) {
         if body != nil {
-            
+            let data = body!
+            var pos: Int = 0
+            data.readString(&code, pos: &pos)
+            data.readString(&name, pos: &pos)
+            data.readValue(&type, size: sizeof(CChar), pos: &pos)
+            data.readValue(&presicion, size: sizeof(CChar), pos: &pos)
+            data.readValue(&volumeUnit, size: sizeof(CShort), pos: &pos)
+            data.readValue(&lastClose, size: sizeof(CInt), pos: &pos)
+            data.readValue(&limitUp, size: sizeof(CInt), pos: &pos)
+            if type == 7 || type == 8 {//对期货或期指是昨日持仓，其它为流通盘
+                data.readValue(&yposition, size: sizeof(CInt), pos: &pos)
+            }else{
+                data.readValue(&circulatedCapital, size: sizeof(CInt), pos: &pos)
+                circulatedCapital = circulatedCapital.expand()
+            }
+            if type == 17 || type == 7 || type == 8 || type == 5 {//对商品、期货是昨结算价，其它是总股本
+                data.readValue(&ysettlement, size: sizeof(CInt), pos: &pos)
+            }else{
+                data.readValue(&totalCapital, size: sizeof(CInt), pos: &pos)
+                totalCapital = totalCapital.expand()
+            }
+            data.readValue(&securitiesMargin, size: sizeof(CChar), pos: &pos)
+            data.readValue(&eachNumber, size: sizeof(CInt), pos: &pos)
+            data.readValue(&extendType, size: sizeof(CChar), pos: &pos)
         }
     }
 }
@@ -136,7 +174,7 @@ public class DZHResponsePackage2943: DZHResponseDataParser {
 }
 
 public class DZHRequestPackage2940: DZHMarketRequestPackage {
-    var code: NSString
+    public var code: NSString//代码
     
     init(code: NSString) {
         self.code = code
@@ -150,11 +188,70 @@ public class DZHRequestPackage2940: DZHMarketRequestPackage {
     }
 }
 
+public class DZHOrderItem: NSObject {
+    public var price: CInt = 0//买卖价
+    public var volume: CInt = 0//买卖量
+    
+    init(price: CInt, volume: CInt) {
+        self.price = price
+        self.volume = volume
+    }
+}
+
 public class DZHResponsePackage2940: DZHResponseDataParser {
+    public var tag: CChar = 0//数据标记
+    public var newPrice: CInt = 0//最新
+    public var open: CInt = 0//今开
+    public var high: CInt = 0//最高
+    public var low: CInt = 0//最低
+    public var volume: CInt = 0//成交量,也叫总手
+    public var turnover: CInt = 0//总额
+    public var sellVolume: CInt = 0//内盘
+    public var currentVol: CInt = 0//现手
+    public var averagePrice: CInt = 0//均价
+    public var settlement: CInt = 0//结算价
+    public var position: CInt = 0//持仓
+    public var incPosition: CInt = 0//增仓
+    public var voluemRatio: CShort = 0//量比
+    public var buyData = NSMutableArray()//买盘记录
+    public var sellData = NSMutableArray()//卖盘记录
     
     override public func deSerialize(body: NSData?) {
         if body != nil {
-            
+            let data = body!
+            var pos: Int = 0
+            data.readValue(&tag, size: sizeof(CChar), pos: &pos)
+            let intSize = sizeof(CInt)
+            data.readValue(&newPrice, size: intSize, pos: &pos)
+            data.readValue(&open, size: intSize, pos: &pos)
+            data.readValue(&high, size: intSize, pos: &pos)
+            data.readValue(&low, size: intSize, pos: &pos)
+            data.readValue(&volume, size: intSize, pos: &pos)
+            data.readValue(&turnover, size: intSize, pos: &pos)
+            data.readValue(&sellVolume, size: intSize, pos: &pos)
+            data.readValue(&currentVol, size: intSize, pos: &pos)
+            data.readValue(&averagePrice, size: intSize, pos: &pos)
+            if tag == 1 {
+                data.readValue(&settlement, size: intSize, pos: &pos)
+                data.readValue(&position, size: intSize, pos: &pos)
+                data.readValue(&incPosition, size: intSize, pos: &pos)
+            }
+            data.readValue(&voluemRatio, size: sizeof(CShort), pos: &pos)
+            var count: Int = 0
+            data.readValue(&count, size: sizeof(CShort), pos: &pos)
+            let half = count / 2;//先卖盘后买盘
+            var price: CInt = 0
+            var vol: CInt = 0
+            for _ in 0 ..< half {//卖盘
+                data.readValue(&price, size: intSize, pos: &pos)
+                data.readValue(&vol, size: intSize, pos: &pos)
+                self.sellData.addObject(DZHOrderItem(price: price, volume: vol))
+            }
+            for _ in half ..< count {//买盘
+                data.readValue(&price, size: intSize, pos: &pos)
+                data.readValue(&vol, size: intSize, pos: &pos)
+                self.buyData.addObject(DZHOrderItem(price: price, volume: vol))
+            }
         }
     }
 }
@@ -167,17 +264,31 @@ public class DZHRequestPackage2963: DZHMarketRequestPackage {
 }
 
 public class DZHResponsePackage2963: DZHResponseDataParser {
+    public var year: CShort = 0//年
+    public var month: CChar = 0//月
+    public var day: CChar = 0//日
+    public var hour: CChar = 0//时
+    public var minute: CChar = 0//分
+    public var second: CChar = 0//秒
     
     override public func deSerialize(body: NSData?) {
         if body != nil {
-            
+            let data = body!
+            var pos: Int = 0
+            let charSize = sizeof(CChar)
+            data.readValue(&year, size: sizeof(CShort), pos: &pos)
+            data.readValue(&month, size: charSize, pos: &pos)
+            data.readValue(&day, size: charSize, pos: &pos)
+            data.readValue(&hour, size: charSize, pos: &pos)
+            data.readValue(&minute, size: charSize, pos: &pos)
+            data.readValue(&second, size: charSize, pos: &pos)
         }
     }
 }
 
 public class DZHRequestPackage2942: DZHMarketRequestPackage {
-    var code: NSString
-    var position: CShort
+    public var code: NSString//代码
+    public var position: CShort//数据位置
     
     init(code: NSString, position: CShort) {
         self.code = code
@@ -194,11 +305,11 @@ public class DZHRequestPackage2942: DZHMarketRequestPackage {
 }
 
 public class DZHResponsePackage2942Item: NSObject {
-    var time: Int = 0 //时间
-    var price: Int = 0//最新价
-    var volume: Int = 0//成交量
-    var averagePrice: Int = 0//均价
-    var holdVolume: Int = 0//持仓量
+    public var time: Int = 0 //时间
+    public var price: Int = 0//最新价
+    public var volume: Int = 0//成交量
+    public var averagePrice: Int = 0//均价
+    public var holdVolume: Int = 0//持仓量
     
     func deSerialize(data: NSData, pos: UnsafeMutablePointer<Int>) {
         let byteSize = sizeof(CInt)
@@ -211,13 +322,13 @@ public class DZHResponsePackage2942Item: NSObject {
 }
 
 public class DZHResponsePackage2942: DZHResponseDataParser {
-    var marketTime: NSMutableString = NSMutableString()//交易时间段
-    var totalNum: CUnsignedShort = 0 //总分时点个数
-    var holdTag: CChar = 0 //持仓标记
-    var bombCount: CChar = 0 //信息地雷数
-    var starVal: CChar = 0 //五星评级
-    var position: CShort = 0 //数据位置
-    var items: NSMutableArray = NSMutableArray()
+    public var marketTime: NSMutableString = NSMutableString()//交易时间段
+    public var totalNum: CUnsignedShort = 0 //总分时点个数
+    public var holdTag: CChar = 0 //持仓标记
+    public var bombCount: CChar = 0 //信息地雷数
+    public var starVal: CChar = 0 //五星评级
+    public var position: CShort = 0 //数据位置
+    public var items: NSMutableArray = NSMutableArray()//分时数据
     
     override public func deSerialize(body: NSData?) {
         if body != nil {
@@ -247,10 +358,10 @@ public class DZHResponsePackage2942: DZHResponseDataParser {
 }
 
 public class DZHRequestPackage2944: DZHMarketRequestPackage {
-    var code: NSString
-    var type: CChar
-    var endDate: CInt
-    var reqNumber: CShort
+    public var code: NSString//代码
+    public var type: CChar//K线类型
+    public var endDate: CInt//截至日期
+    public var reqNumber: CShort//请求根数
     
     init(code: NSString, type: CChar, endDate: CInt, reqNumber: CShort) {
         self.code = code
@@ -271,14 +382,14 @@ public class DZHRequestPackage2944: DZHMarketRequestPackage {
 }
 
 public class DZHResponsePackage2944Item: NSObject,HayateDataCollectionItem {
-    var date: CInt = 0 //日期
-    var open: CInt = 0//开盘价
-    var high: CInt = 0//最高价
-    var low: CInt = 0//最低价
-    var close: CInt = 0//收盘价
-    var volume: Int64 = 0//成交量
-    var turnover: CInt = 0//成交额
-    var holdVolume: CInt = 0//持仓量
+    public var date: CInt = 0 //日期
+    public var open: CInt = 0//开盘价
+    public var high: CInt = 0//最高价
+    public var low: CInt = 0//最低价
+    public var close: CInt = 0//收盘价
+    public var volume: Int64 = 0//成交量
+    public var turnover: CInt = 0//成交额
+    public var holdVolume: CInt = 0//持仓量
     
     func deSerialize(data: NSData, pos: UnsafeMutablePointer<Int>) {
         let byteSize = sizeof(CInt)
@@ -299,8 +410,8 @@ public class DZHResponsePackage2944Item: NSObject,HayateDataCollectionItem {
 }
 
 public class DZHResponsePackage2944: DZHResponseDataParser {
-    var holdTag: CChar = 0 //持仓标记
-    var items: NSMutableArray = NSMutableArray()
+    public var holdTag: CChar = 0 //持仓标记
+    public var items: NSMutableArray = NSMutableArray()//k线数据
     
     override public func deSerialize(body: NSData?) {
         if body != nil {
@@ -326,48 +437,3 @@ public class DZHResponsePackage2944: DZHResponseDataParser {
     }
 }
 
-protocol HayateDataCollectionItem {
-    
-    func collectionPosition() -> CInt
-}
-
-struct HayateDataCollectionPage {
-    var fromPos: CInt
-    var toPos: CInt
-    var fromIndex: Int
-    var toIndex: Int
-}
-
-public class HayateDataCollection: NSObject {
-    
-    var pages: Array<HayateDataCollectionPage> = []
-    public var datas: NSMutableArray = NSMutableArray()
-    
-    public func addPageData(pageData: NSArray) {
-        if pageData.count > 0 {
-            let pageFromPos = (pageData.firstObject as! HayateDataCollectionItem).collectionPosition()
-            let pageToPos = (pageData.lastObject as! HayateDataCollectionItem).collectionPosition()
-           
-            if datas.count == 0 {
-                datas.addObjectsFromArray(pageData as [AnyObject])
-            }else{
-                let fromPos = (datas.firstObject as! HayateDataCollectionItem).collectionPosition()
-                let toPos = (datas.lastObject as! HayateDataCollectionItem).collectionPosition()
-                
-                if pageFromPos > toPos {//后面添加
-                    datas.addObjectsFromArray(pageData as [AnyObject])
-                }else if pageToPos < fromPos {//前面添加
-                    datas.insertObjects(pageData as [AnyObject], atIndex: 0)
-                }else{//两者相交
-                    for item in datas {
-                        let item = item as! HayateDataCollectionItem
-                        if item.collectionPosition() == pageFromPos {
-                            
-                        }
-                    }
-                }
-            }
-            
-        }
-    }
-}

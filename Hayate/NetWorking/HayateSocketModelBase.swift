@@ -58,6 +58,10 @@ protocol HayatePackageHeader {
     var headerSize: Int {get}//包头最终的长度
 }
 
+protocol HayateDataCollectionItem {
+    func collectionPosition() -> CInt
+}
+
 //行情数据包头
 public struct DZH_DATAHEAD: HayatePackageHeader {
     
@@ -142,7 +146,7 @@ public class HayateRequestPackage: NSObject {
     //发送请求
     final func sendRequest(completion: ResponseComplete) {
         self.responseCompletion = completion
-        AppDelegate.theMarketSocket().addRequestPackage(self)
+        AppDelegate.theMarketSocket().sendRequestPackage(self)
     }
     
     //对数据进行序列化，生成二进制数据

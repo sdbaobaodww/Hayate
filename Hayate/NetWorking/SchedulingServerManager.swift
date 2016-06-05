@@ -6,7 +6,7 @@
 //  Copyright © 2016年 Duanwwu. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 public let HayateServerManagerNotification: String = "HayateServerManagerNotification" //获取行情服务器成功通知
 

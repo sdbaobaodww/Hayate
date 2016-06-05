@@ -178,9 +178,66 @@ extension Int64 {
     }
 }
 
+public enum HayateDataVary: Int {
+    case Unknown //未知或者未处理
+    case FrontInsert //头插入数据
+    case EndAppend //尾添加数据
+    case Update //数据更新
+}
+
+public typealias HayatePageUpdate = (type: HayateDataVary, range: NSRange)
+
 extension NSMutableArray {
     public func insertObjects(array: [AnyObject], atIndex index: Int) {
         self.insertObjects(array, atIndexes: NSIndexSet(indexesInRange: NSMakeRange(index, array.count)))
+    }
+    
+    public func addPageData(pageData: NSArray) -> HayatePageUpdate {
+        if pageData.count > 0 {
+            let pageFromPos = (pageData.firstObject as! HayateDataCollectionItem).collectionPosition()
+            let pageToPos = (pageData.lastObject as! HayateDataCollectionItem).collectionPosition()
+            
+            if self.count == 0 {
+                self.addObjectsFromArray(pageData as [AnyObject])
+                return (.EndAppend, NSMakeRange(0, pageData.count))
+            }else{
+                let fromPos = (self.firstObject as! HayateDataCollectionItem).collectionPosition()
+                let toPos = (self.lastObject as! HayateDataCollectionItem).collectionPosition()
+                
+                if pageFromPos > toPos {//后面添加
+                    self.addObjectsFromArray(pageData as [AnyObject])
+                    return (.EndAppend, NSMakeRange(0, pageData.count))
+                }else if pageToPos < fromPos {//前面添加
+                    self.insertObjects(pageData as [AnyObject], atIndex: 0)
+                    return (.FrontInsert, NSMakeRange(0, pageData.count))
+                }else if pageToPos > toPos && pageFromPos <= toPos {//两者相交，部分更新，部分新增
+                    var index: Int = -1
+                    for (i, item) in pageData.enumerate() {
+                        let item = item as! HayateDataCollectionItem
+                        //找出等于toPos的数据，[pageFromPos,toPos]为修改，(toPos,pageToPos]为新增
+                        if item.collectionPosition() == toPos {
+                            index = i
+                        }
+                    }
+                    if index != -1 { //等于－1则数据有误，不处理
+                        let replaceCount = index + 1
+                        let update = pageData.subarrayWithRange(NSMakeRange(0, replaceCount))//需更新的数据
+                        self.replaceObjectsAtIndexes(NSIndexSet(indexesInRange: NSMakeRange(self.count - replaceCount, replaceCount)), withObjects: update)
+                        let add: [AnyObject] = pageData.subarrayWithRange(NSMakeRange(replaceCount, pageData.count - replaceCount))//需要新增的数据
+                        self.addObjectsFromArray(add)
+                        return (.Update, NSMakeRange(self.count - replaceCount, pageData.count))
+                    }
+                }
+                else if pageToPos == toPos {//datas包含pageData，更新datas最后几个元素
+                    let range = NSMakeRange(self.count - pageData.count, pageData.count)
+                    self.replaceObjectsAtIndexes(NSIndexSet(indexesInRange: range), withObjects: pageData as [AnyObject])
+                    return (.Update, range)
+                }else {//datas包含pageData，更新datas某个区间的值，忽略掉，暂不处理
+                    print("暂不处理更新某个区间的值")
+                }
+            }
+        }
+        return (.Unknown, NSRange())
     }
 }
 

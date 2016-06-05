@@ -105,7 +105,7 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
         self.notifySendPackage()//如果可能，发送请求数据
     }
     
-    func addRequestPackage(package: HayateRequestPackage) {
+    public func sendRequestPackage(package: HayateRequestPackage) {
         dispatch_async(operateQueue) {
             if self.isConnected() {//socket已连接
                 self.waitSendQueue.addObject(package)//加入等待发送队列
