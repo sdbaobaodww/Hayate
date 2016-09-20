@@ -179,15 +179,18 @@ extension Int64 {
 }
 
 public enum HayateDataVary: Int {
-    case Unknown //未知或者未处理
+    case Unknown //不支持的类型
+    case Init //第一次拿到数据
     case FrontInsert //头插入数据
     case EndAppend //尾添加数据
-    case Update //数据更新
+    case Update //尾部数据更新或者部分更新部分添加
 }
 
+//页面数据变更信息
 public typealias HayatePageUpdate = (type: HayateDataVary, range: NSRange)
 
 extension NSMutableArray {
+    
     public func insertObjects(array: [AnyObject], atIndex index: Int) {
         self.insertObjects(array, atIndexes: NSIndexSet(indexesInRange: NSMakeRange(index, array.count)))
     }
@@ -199,7 +202,7 @@ extension NSMutableArray {
             
             if self.count == 0 {
                 self.addObjectsFromArray(pageData as [AnyObject])
-                return (.EndAppend, NSMakeRange(0, pageData.count))
+                return (.Init, NSMakeRange(0, pageData.count))
             }else{
                 let fromPos = (self.firstObject as! HayateDataCollectionItem).collectionPosition()
                 let toPos = (self.lastObject as! HayateDataCollectionItem).collectionPosition()

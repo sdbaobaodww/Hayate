@@ -23,7 +23,7 @@ public class DZHRequestPackage1000: DZHMarketRequestPackage {
         self.paymentFlag = 0
         self.carrier = 0
         self.serverList = [1]
-        super.init(header: DZH_DATAHEAD(123, 1000, 0, 0), parser: DZHResponsePackage1000())
+        super.init(header: DZH_DATAHEAD(123, 1000, 0), parser: DZHResponsePackage1000())
     }
     
     convenience init() {
@@ -101,7 +101,7 @@ public class DZHRequestPackage2939: DZHMarketRequestPackage {
     
     init(code: NSString) {
         self.code = code
-        super.init(header: DZH_DATAHEAD(HayateTagCreator.sharedInstance.tag(), 2939, 0, 0), parser: nil)
+        super.init(header: DZH_DATAHEAD(2939), parser: nil)
     }
     
     override func generateResponseParser(responseHeader: HayatePackageHeader) {
@@ -178,7 +178,7 @@ public class DZHRequestPackage2940: DZHMarketRequestPackage {
     
     init(code: NSString) {
         self.code = code
-        super.init(header: DZH_DATAHEAD(HayateTagCreator.sharedInstance.tag(), 2940, 0, 0), parser: DZHResponsePackage2940())
+        super.init(header: DZH_DATAHEAD(2940), parser: DZHResponsePackage2940())
     }
     
     override func serializeBody() -> NSData? {
@@ -259,7 +259,7 @@ public class DZHResponsePackage2940: DZHResponseDataParser {
 public class DZHRequestPackage2963: DZHMarketRequestPackage {
     
     init() {
-        super.init(header: DZH_DATAHEAD(123, 2963, 0, 0), parser: DZHResponsePackage2963())
+        super.init(header: DZH_DATAHEAD(123, 2963, 0), parser: DZHResponsePackage2963())
     }
 }
 
@@ -293,7 +293,7 @@ public class DZHRequestPackage2942: DZHMarketRequestPackage {
     init(code: NSString, position: CShort) {
         self.code = code
         self.position = position
-        super.init(header: DZH_DATAHEAD(HayateTagCreator.sharedInstance.tag(), 2942, 2, 0), parser: DZHResponsePackage2942())
+        super.init(header: DZH_DATAHEAD(2942, 2), parser: DZHResponsePackage2942())
     }
     
     override func serializeBody() -> NSData? {
@@ -368,7 +368,7 @@ public class DZHRequestPackage2944: DZHMarketRequestPackage {
         self.type = type
         self.endDate = endDate
         self.reqNumber = reqNumber
-        super.init(header: DZH_DATAHEAD(HayateTagCreator.sharedInstance.tag(), 2944, 2, 0), parser: DZHResponsePackage2944())
+        super.init(header: DZH_DATAHEAD(2944, 2), parser: DZHResponsePackage2944())
     }
     
     override func serializeBody() -> NSData? {
@@ -381,7 +381,7 @@ public class DZHRequestPackage2944: DZHMarketRequestPackage {
     }
 }
 
-public class DZHResponsePackage2944Item: NSObject,HayateDataCollectionItem {
+public class DZHResponsePackage2944Item: NSObject {
     public var date: CInt = 0 //日期
     public var open: CInt = 0//开盘价
     public var high: CInt = 0//最高价
@@ -402,10 +402,6 @@ public class DZHResponsePackage2944Item: NSObject,HayateDataCollectionItem {
         volume = volume.expand()
         data.readValue(&turnover, size: byteSize, pos: pos)
         data.readValue(&holdVolume, size: byteSize, pos: pos)
-    }
-    
-    func collectionPosition() -> CInt {
-        return date
     }
 }
 
@@ -437,3 +433,53 @@ public class DZHResponsePackage2944: DZHResponseDataParser {
     }
 }
 
+public class DZHRequestPackage2958: DZHMarketRequestPackage {
+    public var code: NSString//代码
+    public var type: CChar//除权方式
+    
+    init(code: NSString, type: CChar) {
+        self.code = code
+        self.type = type
+        super.init(header: DZH_DATAHEAD(2958), parser: DZHResponsePackage2944())
+    }
+    
+    override func serializeBody() -> NSData? {
+        let body: NSMutableData = NSMutableData()
+        body.writeValue(code)
+        body.writeValue(type)
+        return body
+    }
+}
+
+public class DZHResponsePackage2958Item: NSObject {
+    public var date: CInt = 0 //日期
+    public var ratio: CFloat = 0//系数
+    public var constant: CFloat = 0//常数
+    
+    func deSerialize(data: NSData, pos: UnsafeMutablePointer<Int>) {
+        let byteSize = sizeof(CInt)
+        data.readValue(&date, size: byteSize, pos: pos)
+        data.readValue(&ratio, size: byteSize, pos: pos)
+        data.readValue(&constant, size: byteSize, pos: pos)
+    }
+}
+
+public class DZHResponsePackage2958: DZHResponseDataParser {
+    public var items: NSMutableArray = NSMutableArray()//除权数据
+    
+    override public func deSerialize(body: NSData?) {
+        if body != nil {
+            var pos: Int = 0
+            let data = body!
+            var itemCount = 0
+            data.readValue(&itemCount, size: sizeof(CShort), pos: &pos)
+            let arr: NSMutableArray = NSMutableArray.init(capacity: itemCount)
+            for _ in 0 ..< itemCount {
+                let item = DZHResponsePackage2958Item()
+                item.deSerialize(data, pos: &pos)
+                arr.addObject(item)
+            }
+            items = arr
+        }
+    }
+}

@@ -68,18 +68,25 @@ public struct DZH_DATAHEAD: HayatePackageHeader {
     public var tag: CUnsignedChar
     public var type: CUnsignedShort
     public var attrs: CUnsignedShort
-    public var length: UInt
+    public var length: UInt = 0
     public var headerSize: Int = 7
     
-    init() {
-        self.init(123, 0, 0, 0)
-    }
-    
-    init(_ tag: CUnsignedChar, _ type: CUnsignedShort, _ attrs: CUnsignedShort, _ length: UInt) {
+    init(_ tag: CUnsignedChar, _ type: CUnsignedShort, _ attrs: CUnsignedShort) {
         self.tag = tag
         self.type = type
         self.attrs = attrs
-        self.length = length
+    }
+    
+    init(_ type: CUnsignedShort, _ attrs: CUnsignedShort) {
+        self.init(HayateTagCreator.sharedInstance.tag(), type, attrs)
+    }
+    
+    init(_ type: CUnsignedShort) {
+        self.init(HayateTagCreator.sharedInstance.tag(), type, 0)
+    }
+    
+    init() {
+        self.init(123, 0, 0)
     }
     
     func id() -> CLong {
@@ -214,10 +221,10 @@ public class DZHMarketRequestPackage: HayateRequestPackage {
 //行情组包请求
 public class DZHMarketRequestGroupPackage: HayateRequestPackage {
     
-    var group: Array<HayateRequestPackage> = []//组包队列
+    public var group: Array<HayateRequestPackage> = []//组包队列
     
     init() {
-        super.init(header: DZH_DATAHEAD(HayateTagCreator.sharedInstance.tag(), 0, 0, 0))
+        super.init(header: DZH_DATAHEAD(0))
     }
     
     func addPackage(package: HayateRequestPackage) {
@@ -291,7 +298,7 @@ class HayateTagCreator {
     
     // 请求包包头标记[1~240]除123和125; 推送包包头标记[0,241~255]
     func tag() -> CUnsignedChar {
-        if (seqId > 240){
+        if (seqId > 255){
             seqId = 1
         }else{
             seqId += 1

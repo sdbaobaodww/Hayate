@@ -8,6 +8,9 @@
 
 import Foundation
 
+/**
+ * 证券标记
+ */
 public enum DZHSecurityFlag: Int {
     case None//无
     case Margin//融资融券
@@ -16,6 +19,9 @@ public enum DZHSecurityFlag: Int {
     case XGMBond//公募债
 }
 
+/**
+ * 市场类型
+ */
 public enum DZHMarketType: Int {
     case SH		= 1	// 上海
     case SZ		= 2	// 深圳
@@ -82,6 +88,9 @@ public enum DZHMarketType: Int {
     }
 }
 
+/**
+ * 证券类型
+ */
 public enum DZHSecurityType: Int {
     case UNKNOWN        = -1//不清楚类型时使用
     case INDEX          = 0 // 指数
@@ -108,22 +117,101 @@ public enum DZHSecurityType: Int {
     case FENJIMUFUND    = 29 //分级母基金
 }
 
-public enum DZHValueVaryType {
+/**
+ * 指标类型
+ */
+public enum DZHIndicatorsType: Int32 {
+    case MINUTE         // 分时
+    case MINUTE_VOL     // 分时成交量
+    case MINUTE_DDX     // 分时ddx
+    case MINUTE_DIFFER  // 分时单差
+    case MINUTE_TOTALVOL// 分时总买卖量
+    case MINUTE_SHOOT   // 分时突
+    
+    case KLINE          // K线
+    case KLINE_MA       // K线均线
+    case KLINE_VOL      // K线成交量
+    case KLINE_VOL_MA   // K线成交量均线
+    case KLINE_MACD     // K线MACD
+    case KLINE_KDJ      // K线KDJ
+    case KLINE_RSI      // K线RSI
+    case KLINE_BIAS     // K线BIAS
+    case KLINE_CCI      // K线CCI
+    case KLINE_DDX      // K线DDX
+    case KLINE_DDY      // K线DDY
+    case KLINE_DDZ      // K线DDZ
+    case KLINE_MAINMEM  // K线主力资金线
+    case KLINE_BS       // K线BS点
+    case KLINE_BOLL     // K线BOLL
+    case KLINE_WR       // K线WR
+    case KLINE_DMA      // K线DMA
+    case KLINE_D        // K线D信号
+}
+
+/**
+ * 值比较，上涨、下跌、不变
+ */
+public enum DZHValueVary {
     case Rise
     case Fall
     case Cross
+}
+
+extension Int32 {
     
-    init(price: CInt, otherPrice: CInt) {
-        if price > otherPrice {
-            self = .Rise
-        }else if price < otherPrice {
-            self = .Fall
+    public func vary(otherValue: Int32) -> DZHValueVary {
+        if self > otherValue {
+            return .Rise
+        }else if self < otherValue {
+            return .Fall
         }else {
-            self = .Cross
+            return .Cross
         }
     }
 }
 
+extension Int {
+    
+    public func vary(otherValue: Int) -> DZHValueVary {
+        if self > otherValue {
+            return .Rise
+        }else if self < otherValue {
+            return .Fall
+        }else {
+            return .Cross
+        }
+    }
+}
+
+extension Double {
+    
+    public func vary(otherValue: Double) -> DZHValueVary {
+        if self > otherValue {
+            return .Rise
+        }else if self < otherValue {
+            return .Fall
+        }else {
+            return .Cross
+        }
+    }
+}
+
+extension Float {
+    
+    public func vary(otherValue: Float) -> DZHValueVary {
+        if self > otherValue {
+            return .Rise
+        }else if self < otherValue {
+            return .Fall
+        }else {
+            return .Cross
+        }
+    }
+}
+
+/**
+ * 证券数据模型，如股票、基金、债券等
+ */
 public class DZHSecurityModel: NSObject {
     public var code: NSString//证券代码
     public var briefCode: NSString?//去掉市场代码
@@ -136,8 +224,9 @@ public class DZHSecurityModel: NSObject {
     public var precision: CInt = 0//价格小数位数
     public var flag: DZHSecurityFlag = .None//证券标记
     public var type: DZHSecurityType = .UNKNOWN//证券类型
+    public var indicators: Dictionary<DZHIndicatorsType, DZHIndicatorsModel> = Dictionary<DZHIndicatorsType, DZHIndicatorsModel>()//各种指标数据
     
-    init(code: NSString) {
+    init(code: NSString, name: NSString?, type: DZHSecurityType) {
         self.code = code
         if (code.length > 2)
         {
@@ -148,99 +237,115 @@ public class DZHSecurityModel: NSObject {
         }
         super.init()
     }
-}
-
-public class DZHTechnicalModel: NSObject {
-    public var max: Int = 0
-    public var min: Int = 0
-    public var items = NSMutableArray()
     
-    //对数据进行处理
-    func process(model: DZHSecurityModel, originData: NSMutableArray, update: HayatePageUpdate) {
-//        if update.type == .EndAppend {
-//            let index = update.range.location
-//            var lastItem: AnyObject? = index - 1 >= 0 ? originData.objectAtIndex(index - 1) : nil
-//            for origin in originData.subarrayWithRange(update.range) {
-//                self.processItem(curItem: origin, lastItem: lastItem)
-//                lastItem = item
-//            }
-//        }else if update.type == .FrontInsert {
-//            var lastItem: AnyObject? = nil
-//            for origin in originData.subarrayWithRange(update.range) {
-//                self.processItem(curItem: origin, lastItem: lastItem)
-//                lastItem = item
-//            }
-//        }else if update.type == .Update {
-//            var updateData = [AnyObject]()
-//            let index = update.range.location
-//            var lastClose = index - 1 >= 0 ? (originData.objectAtIndex(index - 1) as! DZHResponsePackage2944Item).close : 0
-//            for origin in originData.subarrayWithRange(update.range) {
-//                let item = origin as! DZHResponsePackage2944Item
-//                let model = DZHKLineItemModel(origin: item)
-//                model.type = DZHValueVaryType(price: item.close, otherPrice: lastClose)
-//                updateData.append(model)
-//                lastClose = item.close
-//            }
-//            items.replaceObjectsAtIndexes(NSIndexSet(indexesInRange: NSMakeRange(index, items.count - index)), withObjects: updateData)
-//        }
+    convenience init(code: NSString, name: NSString?) {
+        self.init(code: code, name: name, type: .UNKNOWN);
     }
     
-    func processItem(curItem: AnyObject, lastItem: AnyObject) {
-        
-    }
-    
-    //计算区间的最大值最小值
-    func calculateMaxAndMin(from: Int, to: Int) {
-        
+    convenience init(code: NSString) {
+        self.init(code: code, name: nil, type: .UNKNOWN);
     }
 }
 
-public class DZHKLineItemModel: NSObject {
-    public var type: DZHValueVaryType = .Cross
-    public var origin: DZHResponsePackage2944Item
+/**
+ * 指标基础数据模型，只依赖基础数据，不依赖其它指标
+ */
+public class DZHIndicatorsModel: NSObject {
+    public var max: Int = 0 //最大值
+    public var min: Int = 0 //最小值
+    public var precision: CInt = 0//小数位数
+    public var items = NSMutableArray() //数据项
     
-    init(origin: DZHResponsePackage2944Item) {
-        self.origin = origin
-    }
-}
-
-public class DZHKLineModel: DZHTechnicalModel {
-    
-    public func process(model: DZHSecurityModel, originData: NSMutableArray, update: HayatePageUpdate) {
-        if update.type == .EndAppend {
-            var lastClose = (items.lastObject != nil) ? (items.lastObject as! DZHKLineItemModel).origin.close : 0
-            for origin in originData.subarrayWithRange(update.range) {
-                let item = origin as! DZHResponsePackage2944Item
-                let model = DZHKLineItemModel(origin: item)
-                model.type = DZHValueVaryType(price: item.close, otherPrice: lastClose)
-                items.addObject(model)
-                lastClose = item.close
-            }
-        }else if update.type == .FrontInsert {
-            var lastClose: CInt = 0
-            for origin in originData.subarrayWithRange(update.range) {
-                let item = origin as! DZHResponsePackage2944Item
-                let model = DZHKLineItemModel(origin: item)
-                model.type = DZHValueVaryType(price: item.close, otherPrice: lastClose)
-                items.insertObject(model, atIndex: 0)
-                lastClose = item.close
-            }
-        }else if update.type == .Update {
-            var updateData = [AnyObject]()
+    /**
+     * 对数据进行处理
+     * 1，根据原始数据生成指标模型数据，并放置在items的正确位置
+     * 2，可对更新后的数据进行指标计算
+     */
+    public func process(originData: NSMutableArray, update: HayatePageUpdate) {
+        let updateDatas = originData.subarrayWithRange(update.range)
+        switch update.type {
+        case .Init:
+            let models = self.createModelsWithOriginData(updateDatas)
+            items.addObjectsFromArray(models)
+        case .EndAppend:
+            let models = self.createModelsWithOriginData(updateDatas)
+            items.addObjectsFromArray(models)
+        case .FrontInsert:
+            let models = self.createModelsWithOriginData(updateDatas)
+            items.insertObjects(models, atIndex: 0)
+        case .Update:
             let index = update.range.location
-            var lastClose = index - 1 >= 0 ? (originData.objectAtIndex(index - 1) as! DZHResponsePackage2944Item).close : 0
-            for origin in originData.subarrayWithRange(update.range) {
-                let item = origin as! DZHResponsePackage2944Item
-                let model = DZHKLineItemModel(origin: item)
-                model.type = DZHValueVaryType(price: item.close, otherPrice: lastClose)
-                updateData.append(model)
-                lastClose = item.close
-            }
-            items.replaceObjectsAtIndexes(NSIndexSet(indexesInRange: NSMakeRange(index, items.count - index)), withObjects: updateData)
+            let models = self.createModelsWithOriginData(updateDatas)
+            items.replaceObjectsAtIndexes(NSIndexSet(indexesInRange: NSMakeRange(index, items.count - index)), withObjects: models)
+        default:
+            break
         }
+        let indexSet = self.needRecalculateIndexs(update)
+        self.calculateTechnical(indexSet)//计算指标
     }
     
+    public func createModelsWithOriginData(origins: [AnyObject]) -> [AnyObject] {
+        return []
+    }
+    
+    /**
+     * 需要重新计算指标数据的索引集合
+     * @param update 页面数据变更信息
+     * @returns 索引集合
+     */
+    func needRecalculateIndexs(update: HayatePageUpdate) -> NSIndexSet {
+        return NSIndexSet(indexesInRange: NSMakeRange(0, items.count))
+    }
+    
+    public func calculateTechnical(updateIndex: NSIndexSet) {
+        
+    }
+    
+    /**
+     * 计算区间的最大值最小值
+     * @param from 开始索引
+     * @param to 结束索引
+     */
     public func calculateMaxAndMin(from: Int, to: Int) {
+        
+    }
+}
+
+public class DZHKLineModel: DZHIndicatorsModel {
+    
+    public override func createModelsWithOriginData(origins: [AnyObject]) -> [AnyObject] {
+        var results: [AnyObject] = []
+        for data in origins {
+            results.append(DZHKLineItemModel(origin: data as! DZHResponsePackage2944Item))
+        }
+        return results
+    }
+    
+//    override func needRecalculateIndexs(update: HayatePageUpdate) -> NSIndexSet {
+//        let range = update.range
+//        switch update.type {
+//        case .Init:
+//            return NSIndexSet(indexesInRange: range)
+//        case .EndAppend:
+//            return NSIndexSet(indexesInRange: NSMakeRange(range.location - 1, range.length + 1))
+//        case .FrontInsert:
+//            return NSIndexSet(indexesInRange: NSMakeRange(range.location, range.length + 1))
+//        case .Update:
+//            if range.location == 0 {
+//                return NSIndexSet(indexesInRange: range)
+//            }else{
+//                return NSIndexSet(indexesInRange: NSMakeRange(range.location - 1, range.length + 1))
+//            }
+//        default:
+//            return NSIndexSet(indexesInRange: range)
+//        }
+//    }
+    
+    public override func calculateTechnical(updateIndex: NSIndexSet) {
+        
+    }
+    
+    public override func calculateMaxAndMin(from: Int, to: Int) {
         
     }
 }

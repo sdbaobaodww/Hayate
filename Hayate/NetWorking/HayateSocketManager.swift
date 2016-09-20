@@ -24,6 +24,9 @@ protocol HayateSocketDataManager {
     func findRequestPackage(responseHeader: HayatePackageHeader) -> HayateRequestPackage?//根据返回数据包头查找对应的发送包
 }
 
+/**
+ * Socket管理基类
+ */
 public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
     public var timeout: NSTimeInterval = 7//超时时间
     public var receiveBytes: Int = 0//接收到的数据长度
@@ -49,19 +52,19 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
         
         self.monitor?.addMonitorObject(self)
         
-        socketTransceiver.connectSuccessBlock = { (host: NSString, port: ushort) in
+        socketTransceiver.connectSuccessBlock = { [unowned self] (host: NSString, port: ushort) in
             self.didConnectHost(host, port: port)
         }
-        socketTransceiver.connectFailureBlock = { (host: NSString, port: ushort) in
+        socketTransceiver.connectFailureBlock = { [unowned self] (host: NSString, port: ushort) in
             self.connectHostFailure(host, port: port)
         }
-        socketTransceiver.disConnectBlock = { () in
+        socketTransceiver.disConnectBlock = { [unowned self] () in
             self.didDisConnect()
         }
-        socketTransceiver.writeSuccessBlock = { (tag: CLong) in
+        socketTransceiver.writeSuccessBlock = { [unowned self] (tag: CLong) in
             self.didWriteData(tag)
         }
-        socketTransceiver.readSuccessBlock = { (data: NSData) in
+        socketTransceiver.readSuccessBlock = { [unowned self] (data: NSData) in
             self.didReadData(data)
         }
     }
