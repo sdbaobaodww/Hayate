@@ -12,7 +12,6 @@ public typealias ResponseComplete = (status: ResponseStatus, package: HayateRequ
 
 //请求包状态
 public enum RequestStatus {
-    case Default //默认
     case Inited //已初始化
     case Enqueue //已入发送队列
     case Serialized //已序列化
@@ -22,7 +21,6 @@ public enum RequestStatus {
     
     func toString() -> String {
         switch self {
-            case Default: return "默认"
             case Inited: return "已初始化"
             case Enqueue: return "已入发送队列"
             case Serialized: return "已序列化"
@@ -130,7 +128,7 @@ public struct DZH_DATAHEAD: HayatePackageHeader {
 //请求包基类
 public class HayateRequestPackage: NSObject {
     
-    var status: RequestStatus = .Default//请求包状态
+    var status: RequestStatus = .Inited//请求包状态
     
     var header: HayatePackageHeader//包头
     
@@ -142,7 +140,6 @@ public class HayateRequestPackage: NSObject {
     
     init(header: HayatePackageHeader) {
         self.header = header
-        status = .Inited
     }
     
     //如果responseParser未初始化，则调用此方法进行初始化
