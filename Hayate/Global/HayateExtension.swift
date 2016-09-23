@@ -140,7 +140,7 @@ extension Array {
             return nil
         }else{
             srandom(UInt32(time(nil)))            // 种子,random对应的是srandom
-            return self[random() % self.count]
+            return self[Int(arc4random()) % self.count]
         }
     }
 }
@@ -151,7 +151,7 @@ extension NSArray {
             return nil
         }else{
             srandom(UInt32(time(nil)))            // 种子,random对应的是srandom
-            return self[random() % self.count]
+            return self[Int(arc4random()) % self.count]
         }
     }
 }
