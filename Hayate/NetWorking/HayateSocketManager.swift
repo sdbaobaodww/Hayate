@@ -19,26 +19,26 @@ protocol HayateSocketDataManager {
     
     func waitResponseCount() -> Int
     
-    func findRequestPackage(tag: CLong) -> HayateRequestPackage?//根据请求id查找对应的发送包
+    func findRequestPackage(_ tag: CLong) -> HayateRequestPackage?//根据请求id查找对应的发送包
     
-    func findRequestPackage(responseHeader: HayatePackageHeader) -> HayateRequestPackage?//根据返回数据包头查找对应的发送包
+    func findRequestPackage(_ responseHeader: HayatePackageHeader) -> HayateRequestPackage?//根据返回数据包头查找对应的发送包
 }
 
 /**
  * Socket管理基类
  */
-public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
-    public var timeout: NSTimeInterval = 7//超时时间
-    public var receiveBytes: Int = 0//接收到的数据长度
-    private let maxWaitResponse: Int //等待响应队列数据个数限制
-    private let maxWaitSend: Int //等待发送队列数据个数限制
+open class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
+    open var timeout: TimeInterval = 7//超时时间
+    open var receiveBytes: Int = 0//接收到的数据长度
+    fileprivate let maxWaitResponse: Int //等待响应队列数据个数限制
+    fileprivate let maxWaitSend: Int //等待发送队列数据个数限制
     var header: HayatePackageHeader//数据包头
     let headerLength: Int//包头最少占用的长度
     var socketTransceiver: HayateSocketTransceiver//socket数据收发器
     var waitSendQueue = NSMutableArray()//等待发送队列
     var waitResponseQueue = NSMutableArray()//等待响应队列
     var receiveDatas = NSMutableData()//响应数据
-    let operateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)//socket delegate回调 和 对请求包操作所在的线程
+    let operateQueue = DispatchQueue(label: "SocketManager", attributes: [])//socket delegate回调 和 对请求包操作所在的线程
     weak var monitor: HayateSocketMonitor?
     
     init(header: HayatePackageHeader, maxWaitSend: Int, maxWaitResponse: Int, monitor: HayateSocketMonitor?) {
@@ -46,7 +46,7 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
         self.maxWaitSend = maxWaitSend
         self.maxWaitResponse = maxWaitResponse
         self.monitor = monitor
-        headerLength = header.dynamicType.minSize()
+        headerLength = type(of: header).minSize()
         socketTransceiver = HayateSocketTransceiver(delegateQueue: operateQueue)
         super.init()
         
@@ -64,56 +64,56 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
         socketTransceiver.writeSuccessBlock = { [unowned self] (tag: CLong) in
             self.didWriteData(tag)
         }
-        socketTransceiver.readSuccessBlock = { [unowned self] (data: NSData) in
+        socketTransceiver.readSuccessBlock = { [unowned self] (data: Data) in
             self.didReadData(data)
         }
     }
     
-    func didConnectHost(host: NSString, port: ushort) {
-        print("连接行情服务器成功 \(host):\(port)")
+    func didConnectHost(_ host: NSString, port: ushort) {
+        LOG_DEBUG(LogModule.socket, "连接行情服务器成功 \(host):\(port)")
     }
     
-    func connectHostFailure(host: NSString, port: ushort) {
-        print("连接行情服务器失败 \(host):\(port)")
+    func connectHostFailure(_ host: NSString, port: ushort) {
+        LOG_DEBUG(LogModule.socket, "连接行情服务器失败 \(host):\(port)")
     }
     
     func didDisConnect() {
-        print("行情服务器断开连接成功")
+        LOG_DEBUG(LogModule.socket, "行情服务器断开连接成功")
         self.removeAllPackage(self.waitSendQueue)
         self.removeAllPackage(self.waitResponseQueue)
         self.notifyPackageCountChange()
     }
     
-    func didWriteData(tag: CLong) {
+    func didWriteData(_ tag: CLong) {
         let requestPackage = self.findRequestPackage(tag)//从等待发送队列查找请求包
         if let package = requestPackage {
-            package.status = RequestStatus.Sended
+            package.status = RequestStatus.sended
             if package.ignorResponse { //不需要等待返回的发送完成后，直接结束请求流程
-                self.setPackageResponseStatus(package, status: ResponseStatus.Success)//响应状态置为Success
+                self.setPackageResponseStatus(package, status: ResponseStatus.success)//响应状态置为Success
             }else{//需要响应数据的加入待响应队列
-                print("加入待响应队列:\(package.header.id())")
-                self.waitResponseQueue.addObject(package)
+                LOG_DEBUG(LogModule.socket, "加入待响应队列:\(package.header.id())")
+                self.waitResponseQueue.add(package)
             }
-            self.waitSendQueue.removeObject(package)
-            print("从待发送队列移除:\(package.header.id())")
+            self.waitSendQueue.remove(package)
+            LOG_DEBUG(LogModule.socket, "从待发送队列移除:\(package.header.id())")
             self.notifyPackageCountChange()//包个数变更处理
         }
         self.notifySendPackage()//如果可能，发送请求数据
     }
     
-    func didReadData(data: NSData) {
-        receiveBytes += data.length
-        receiveDatas.appendData(data)
-        self.responseDataHandle(receiveDatas)
+    func didReadData(_ data: Data) {
+        receiveBytes += data.count
+        receiveDatas.append(data)
+        self.responseDataHandle(receiveDatas as Data)
         self.notifySendPackage()//如果可能，发送请求数据
     }
     
-    public func sendRequestPackage(package: HayateRequestPackage) {
-        dispatch_async(operateQueue) {
+    open func sendRequestPackage(_ package: HayateRequestPackage) {
+        operateQueue.async {
             if self.isConnected() {//socket已连接
-                self.waitSendQueue.addObject(package)//加入等待发送队列
-                print("加入待发送队列:\(package.header.id())")
-                package.status = RequestStatus.Enqueue
+                self.waitSendQueue.add(package)//加入等待发送队列
+                LOG_DEBUG(LogModule.socket, "加入待发送队列:\(package.header.id())")
+                package.status = RequestStatus.enqueue
                 if !package.ignorResponse { //只有需要等待返回的才有超时处理
                     self.addTimeoutHandle(package)
                 }
@@ -123,7 +123,7 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
                 self.notifyPackageCountChange()//包个数变更处理
                 self.notifySendPackage()//如果可能，发送请求数据
             }else{//socket未连接
-                self.setPackageResponseStatus(package, status: ResponseStatus.SocketClose)
+                self.setPackageResponseStatus(package, status: ResponseStatus.socketClose)
             }
         }
     }
@@ -132,7 +132,7 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
         //从待发送队列中找出第一个还未进行发送的请求包
         for item in self.waitSendQueue {
             let package = item as! HayateRequestPackage
-            if package.status == RequestStatus.Enqueue {
+            if package.status == RequestStatus.enqueue {
                 //1，不需要返回数据，直接发送；2，需要返回数据，则判断等待响应队列是否超出阀值
                 if package.ignorResponse || self.waitResponseQueue.count < self.maxWaitResponse {
                     self.socketTransceiver.sendData(package.serialize(), tag: package.header.id())
@@ -143,49 +143,49 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
         }
     }
     
-    func responseDataHandle(data: NSData) {
+    func responseDataHandle(_ data: Data) {
         var pos = 0 //处理的长度
-        while data.length >= pos + headerLength {
+        while data.count >= pos + headerLength {
             var itempos = pos //每个包独立一个位置变量
             let length = header.deSerialize(data, pos: &itempos)//反序列化包头数据
-            if itempos + length > data.length {//缺少数据情况，忽略掉该头部数据，以便接受完数据后继续处理
-                print("数据未完全返回:\(header.id())")
+            if itempos + length > data.count {//缺少数据情况，忽略掉该头部数据，以便接受完数据后继续处理
+                LOG_DEBUG(LogModule.socket, "数据未完全返回:\(header.id())")
                 break
             }else{//数据正常
                 let requestPackage = self.findRequestPackage(header)//从等待响应队列查找请求包
                 if requestPackage == nil {
-                    print("找不到请求包:\(header.id())")
+                    LOG_ERROR(LogModule.socket, "找不到请求包:\(header.id())")
                 }else{
-                    print("接收到响应数据:\(header.id())")
+                    LOG_DEBUG(LogModule.socket, "接收到响应数据:\(header.id())")
                     let package = requestPackage!
                     //无响应数据请求没有超时处理、组包请求第一次收到数据就已取消过超时处理
-                    if !package.ignorResponse && package.status != RequestStatus.Received{
+                    if !package.ignorResponse && package.status != RequestStatus.received{
                         self.cancelTimeoutHandle(package)
                     }
-                    package.receiveData(header, data: length > 0 ? data.subdataWithRange(NSMakeRange(itempos, length)) : nil)
+                    package.receiveData(header, data: length > 0 ? data.subdata(in: Range(itempos ..< itempos + length)) : nil)
                     if package.isFinished() {//接收结束
-                        self.setPackageResponseStatus(package, status: ResponseStatus.Success)//响应状态置为Success
-                        self.waitResponseQueue.removeObject(package)//已接收完成数据，将包从等待响应队列移除
-                        print("从待响应队列移除:\(package.header.id())")
+                        self.setPackageResponseStatus(package, status: ResponseStatus.success)//响应状态置为Success
+                        self.waitResponseQueue.remove(package)//已接收完成数据，将包从等待响应队列移除
+                        LOG_DEBUG(LogModule.socket, "从待响应队列移除:\(package.header.id())")
                     }
                 }
                 itempos += length
                 pos = itempos
             }
         }
-        self.receiveDatas.replaceBytesInRange(NSMakeRange(0, pos), withBytes: nil, length: 0)//删除处理完成的数据
+        self.receiveDatas.replaceBytes(in: NSMakeRange(0, pos), withBytes: nil, length: 0)//删除处理完成的数据
         self.notifyPackageCountChange()//包个数变更处理
     }
     
-    public func connectHost(host: String, port: ushort) {
+    open func connectHost(_ host: String, port: ushort) {
         socketTransceiver.connectToHost(host, port: port, timeout: timeout)
     }
     
-    public func disconnect() {
+    open func disconnect() {
         socketTransceiver.disconnect()
     }
     
-    public func isConnected() -> Bool {
+    open func isConnected() -> Bool {
         return socketTransceiver.isConnected()
     }
     
@@ -193,48 +193,48 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
         monitor?.notify(self)
     }
     
-    func removePackageAtIndex(queue: NSMutableArray, index: Int) {
-        let package = queue.objectAtIndex(index) as! HayateRequestPackage
+    func removePackageAtIndex(_ queue: NSMutableArray, index: Int) {
+        let package = queue.object(at: index) as! HayateRequestPackage
         self.cancelTimeoutHandle(package)
-        queue.removeObjectAtIndex(index)
+        queue.removeObject(at: index)
     }
     
-    func removeAllPackage(queue: NSMutableArray) {
+    func removeAllPackage(_ queue: NSMutableArray) {
         for item in queue {
             let package = item as! HayateRequestPackage
             self.cancelTimeoutHandle(package)//取消超时处理
-            self.setPackageResponseStatus(package, status: ResponseStatus.SocketClose)//响应状态置为SocketClose
+            self.setPackageResponseStatus(package, status: ResponseStatus.socketClose)//响应状态置为SocketClose
         }
         queue.removeAllObjects()
     }
     
-    func setPackageResponseStatus(package: HayateRequestPackage, status: ResponseStatus) {
+    func setPackageResponseStatus(_ package: HayateRequestPackage, status: ResponseStatus) {
         if let completion = package.responseCompletion {
-            completion(status: status, package: package)//响应状态置为SocketClose
+            completion(status, package)//响应状态置为SocketClose
         }
     }
     
-    func addTimeoutHandle(package: HayateRequestPackage) {
-        dispatch_async(dispatch_get_main_queue()) {
-            self.performSelector(#selector(self.requestTimeout(_:)), withObject: package, afterDelay: self.timeout)
+    func addTimeoutHandle(_ package: HayateRequestPackage) {
+        DispatchQueue.main.async {
+            self.perform(#selector(self.requestTimeout(_:)), with: package, afterDelay: self.timeout)
         }
     }
     
-    func cancelTimeoutHandle(package : HayateRequestPackage) {
-        dispatch_async(dispatch_get_main_queue()) {
-            NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: #selector(self.requestTimeout(_:)), object: package)
+    func cancelTimeoutHandle(_ package : HayateRequestPackage) {
+        DispatchQueue.main.async {
+            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.requestTimeout(_:)), object: package)
         }
     }
     
-    func requestTimeout(package: HayateRequestPackage) {
-        dispatch_async(operateQueue) {
+    func requestTimeout(_ package: HayateRequestPackage) {
+        operateQueue.async {
             print("请求包超时:\(package.header.id()) 当前状态:\(package.status)")
-            if package.status == RequestStatus.Serialized {//如果已经序列化了，则请求包位于等待响应队列，否则位于等待发送队列
-                self.waitResponseQueue.removeObject(package)
+            if package.status == RequestStatus.serialized {//如果已经序列化了，则请求包位于等待响应队列，否则位于等待发送队列
+                self.waitResponseQueue.remove(package)
             }else{
-                self.waitSendQueue.removeObject(package)
+                self.waitSendQueue.remove(package)
             }
-            self.setPackageResponseStatus(package, status: ResponseStatus.Timeout)//响应状态置为Timeout
+            self.setPackageResponseStatus(package, status: ResponseStatus.timeout)//响应状态置为Timeout
         }
     }
     
@@ -246,7 +246,7 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
         return self.waitResponseQueue.count
     }
     
-    func findRequestPackage(tag: CLong) -> HayateRequestPackage? {
+    func findRequestPackage(_ tag: CLong) -> HayateRequestPackage? {
         var requestPackage: HayateRequestPackage?
         for item in self.waitSendQueue {
             let package = item as! HayateRequestPackage
@@ -258,7 +258,7 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
         return requestPackage
     }
     
-    func findRequestPackage(responseHeader: HayatePackageHeader) -> HayateRequestPackage? {
+    func findRequestPackage(_ responseHeader: HayatePackageHeader) -> HayateRequestPackage? {
         var requestPackage: HayateRequestPackage?
         for item in self.waitResponseQueue {
             let package = item as! HayateRequestPackage
@@ -271,19 +271,19 @@ public class HayateSocketManagerBase: NSObject,HayateSocketDataManager {
     }
 }
 
-public class HayateMarketSocketManager: HayateSocketManagerBase {
+open class HayateMarketSocketManager: HayateSocketManagerBase {
     
     init(monitor: HayateSocketMonitor?) {
         super.init(header: DZH_DATAHEAD(), maxWaitSend: 10, maxWaitResponse: 10, monitor: monitor)
     }
     
-    override func didConnectHost(host: NSString, port: ushort) {
+    override func didConnectHost(_ host: NSString, port: ushort) {
         super.didConnectHost(host, port: port)
-        NSNotificationCenter.defaultCenter().postNotificationName(HayateConnectSuccessNotification, object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: HayateConnectSuccessNotification), object: nil)
     }
     
     override func didDisConnect() {
         super.didDisConnect()
-        NSNotificationCenter.defaultCenter().postNotificationName(HayateDisConnectNotification, object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: HayateDisConnectNotification), object: nil)
     }
 }

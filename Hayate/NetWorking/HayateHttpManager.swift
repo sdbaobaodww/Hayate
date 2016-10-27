@@ -11,8 +11,8 @@ import Foundation
 public typealias Succeed = (AnyObject!)->Void
 public typealias Failure = (NSError!)->Void
 
-public class HayateHttpManager: NSObject {
-    private var httpManager:AFHTTPSessionManager
+open class HayateHttpManager: NSObject {
+    fileprivate var httpManager:AFHTTPSessionManager
     
     override convenience init(){
         self.init(constructing: { (manager: AFHTTPSessionManager) in
@@ -21,66 +21,70 @@ public class HayateHttpManager: NSObject {
             })
     }
     
-    init(constructing: (httpMananger: AFHTTPSessionManager) -> Void) {
-        let sessionConfig = NSURLSessionConfiguration.defaultSessionConfiguration()
+    init(constructing: (_ httpMananger: AFHTTPSessionManager) -> Void) {
+        let sessionConfig = URLSessionConfiguration.default
         sessionConfig.timeoutIntervalForResource = 10
         httpManager = AFHTTPSessionManager(baseURL: nil, sessionConfiguration: sessionConfig);
-        constructing(httpMananger: httpManager)
+        constructing(httpManager)
     }
     
     //POST请求 body直接使用二进制数据
-    public func POSTStream(url: String, body: NSData, succeed: Succeed, failed: Failure){
-        let mysucceed: Succeed = succeed
-        let myfailure: Failure = failed
-        let request = NSMutableURLRequest(URL: NSURL(string: url)!)
-        request.HTTPMethod = "POST"
-        request.HTTPBody = body
-        httpManager.dataTaskWithRequest(request, completionHandler: { (response: NSURLResponse!, responseObject: AnyObject!, error: NSError?) in
-            if error != nil {
-                myfailure(error)
+    open func POSTStream(_ url: String, body: Data, succeed: @escaping Succeed, failed: @escaping Failure){
+        let request = NSMutableURLRequest(url: URL(string: url)!)
+        request.httpMethod = "POST"
+        request.httpBody = body
+        
+        httpManager.dataTask(with: request as URLRequest, completionHandler: { (response, responseObject, error) in
+            if responseObject != nil {
+                succeed(responseObject as AnyObject!)
             }else{
-                mysucceed(responseObject)
+                failed(error as NSError!)
             }
         }).resume()
     }
     
     //普通HTTP POST网络请求
-    public func POST(url: String!, body: AnyObject?, succeed: Succeed, failed: Failure) {
-        let mysucceed: Succeed = succeed
-        let myfailure: Failure = failed
-        httpManager.POST(url, parameters: body, success: { (task:NSURLSessionDataTask!, responseObject:AnyObject!) in
-                mysucceed(responseObject)
-            }, failure:{ (task: NSURLSessionDataTask!, error: NSError!) in
-                myfailure(error)
-        })
+    open func POST(_ url: String!, body: AnyObject?, succeed: @escaping Succeed, failed: @escaping Failure) {
+        httpManager.post(url,
+                         parameters: body,
+                         success: { (task: URLSessionDataTask, responseObject: Any) in
+                            succeed(responseObject as AnyObject!)
+                            },
+                         failure: { (task: URLSessionDataTask, error: Error) in
+                            failed(error as NSError!)
+                            }
+        )
     }
     
     //普通HTTP GET网络请求
-    public func GET(url: String!, body: AnyObject?, succeed: Succeed, failed: Failure) {
-        let mysucceed: Succeed = succeed
-        let myfailure: Failure = failed
-        httpManager.GET(url, parameters: nil,
-                        success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!) in
-                            mysucceed(responseObject)
-                        }, failure: {(task: NSURLSessionDataTask!, error: NSError!) in
-                            myfailure(error)
-        })
+    open func GET(_ url: String!, body: AnyObject?, succeed: @escaping Succeed, failed: @escaping Failure) {
+        httpManager.get(url,
+                        parameters: nil,
+                        success: { (task: URLSessionDataTask, responseObject: Any) in
+                            succeed(responseObject as AnyObject)
+                        }, failure: {(task: URLSessionDataTask, error: Error) in
+                            failed(error as NSError!)
+                        }
+        )
     }
     
     //上传图片
-    public func uploadImage(url: String, body: Dictionary<String,String>?, imagePath: String, succeed: Succeed, failed: Failure){
+    open func uploadImage(_ url: String, body: Dictionary<String,String>?, imagePath: String, succeed: @escaping Succeed, failed: @escaping Failure){
         let image: UIImage? = UIImage(contentsOfFile: imagePath)
-        let imageData: NSData? = UIImageJPEGRepresentation(image!, 1.0)
+        let imageData: Data? = UIImageJPEGRepresentation(image!, 0.6)
         if imageData != nil {
-            let mysucceed: Succeed = succeed
-            let myfailure: Failure = failed
-            httpManager.POST(url, parameters: body, constructingBodyWithBlock: { (formData: AFMultipartFormData!) in
-                formData.appendPartWithFileData(imageData!, name: "upload", fileName: "upload", mimeType: "image/jpeg")
-                }, success: { (task: NSURLSessionDataTask!, responseObject: AnyObject!)in
-                    mysucceed(responseObject)
-                }, failure: { (task: NSURLSessionDataTask!, error: NSError!)in
-                    myfailure(error)
-            })
+            httpManager.post(url,
+                             parameters: body,
+                             constructingBodyWith: { (formData: AFMultipartFormData!) in
+                                formData.appendPart(withFileData: imageData!, name: "upload", fileName: "upload", mimeType: "image/jpeg")
+                                },
+                             success: { (task: URLSessionDataTask, responseObject: Any)in
+                                succeed(responseObject as AnyObject!)
+                                },
+                             failure: { (task: URLSessionDataTask, error: Error)in
+                                failed(error as NSError!)
+                                }
+            )
         }
     }
 }

@@ -8,10 +8,10 @@
 
 import Foundation
 
-typealias ConnectSuccessBlock = (host: NSString, port: ushort)->Void
+typealias ConnectSuccessBlock = (_ host: NSString, _ port: ushort)->Void
 typealias DisconnectBlock = (Void)->Void
-typealias WriteSuccessBlock = (tag: CLong)->Void
-typealias ReadSuccessBlock = (data: NSData)->Void
+typealias WriteSuccessBlock = (_ tag: CLong)->Void
+typealias ReadSuccessBlock = (_ data: Data)->Void
 
 class HayateSocketTransceiver: NSObject {
     var socket: GCDAsyncSocket = GCDAsyncSocket()
@@ -21,19 +21,19 @@ class HayateSocketTransceiver: NSObject {
     var writeSuccessBlock: WriteSuccessBlock?
     var readSuccessBlock: ReadSuccessBlock?
     
-    init(delegateQueue: dispatch_queue_t) {
+    init(delegateQueue: DispatchQueue) {
         super.init()
         socket.delegate = self
         socket.delegateQueue = delegateQueue
     }
     
-    func connectToHost(host: String, port: ushort, timeout: NSTimeInterval) {
+    func connectToHost(_ host: String, port: ushort, timeout: TimeInterval) {
         do {
-            try socket.connectToHost(host, onPort: port, withTimeout: timeout)
+            try socket.connect(toHost: host, onPort: port, withTimeout: timeout)
         }catch let error as NSError  {
             print("socket connect error code:\(error.code) domain:\(error.domain)")
             if self.connectFailureBlock != nil {
-                self.connectFailureBlock!(host: host, port: port)
+                self.connectFailureBlock!(host as NSString, port)
             }
         }
     }
@@ -46,39 +46,39 @@ class HayateSocketTransceiver: NSObject {
         return socket.isConnected
     }
     
-    func sendData(data: NSData, tag: CLong) {
-        socket.writeData(data, withTimeout: -1, tag: tag)
+    func sendData(_ data: Data, tag: CLong) {
+        socket.write(data, withTimeout: -1, tag: tag)
     }
     
-    func socket(sock: GCDAsyncSocket, didConnectToHost host: NSString, port:u_short) {
+    func socket(_ sock: GCDAsyncSocket, didConnectToHost host: NSString, port:u_short) {
         if self.connectSuccessBlock != nil {
-            self.connectSuccessBlock!(host: sock.connectedHost, port: sock.connectedPort)
+            self.connectSuccessBlock!(sock.connectedHost as NSString, sock.connectedPort)
         }
-        sock.readDataWithTimeout(-1, tag: 0)
+        sock.readData(withTimeout: -1, tag: 0)
     }
     
-    func socket(sock: GCDAsyncSocket, didWriteDataWithTag tag: CLong) {
+    func socket(_ sock: GCDAsyncSocket, didWriteDataWithTag tag: CLong) {
         if self.writeSuccessBlock != nil {
-            self.writeSuccessBlock!(tag: tag)
+            self.writeSuccessBlock!(tag)
         }
     }
     
-    func socket(sock: GCDAsyncSocket, shouldTimeoutWriteWithTag tag: CLong, elapsed: NSTimeInterval, bytesDone length: UInt) -> NSTimeInterval {
+    func socket(_ sock: GCDAsyncSocket, shouldTimeoutWriteWithTag tag: CLong, elapsed: TimeInterval, bytesDone length: UInt) -> TimeInterval {
         return 0
     }
     
-    func socket(sock: GCDAsyncSocket, didReadData data: NSData, withTag tag: CLong) {
+    func socket(_ sock: GCDAsyncSocket, didReadData data: Data, withTag tag: CLong) {
         if self.readSuccessBlock != nil {
-            self.readSuccessBlock!(data: data)
+            self.readSuccessBlock!(data)
         }
-        sock.readDataWithTimeout(-1, tag: 0)
+        sock.readData(withTimeout: -1, tag: 0)
     }
     
-    func socket(sock: GCDAsyncSocket, shouldTimeoutReadWithTag tag: CLong, elapsed: NSTimeInterval, bytesDone length: UInt) -> NSTimeInterval {
+    func socket(_ sock: GCDAsyncSocket, shouldTimeoutReadWithTag tag: CLong, elapsed: TimeInterval, bytesDone length: UInt) -> TimeInterval {
         return 0
     }
     
-    func socketDidDisconnect(sock: GCDAsyncSocket, withError err: NSError) {
+    func socketDidDisconnect(_ sock: GCDAsyncSocket, withError err: NSError) {
         if self.disConnectBlock != nil {
             self.disConnectBlock!()
         }

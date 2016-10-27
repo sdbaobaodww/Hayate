@@ -9,17 +9,17 @@
 import Foundation
 
 //socket检测管理类
-public class HayateSocketMonitor: NSObject {
+open class HayateSocketMonitor: NSObject {
     
     var globalWaitSendCount: Int = 0
     var globalWaitResponseCount: Int = 0
     var socketManagers: Array<HayateSocketManagerBase> = []
     
-    func addMonitorObject(manager: HayateSocketManagerBase) {
+    func addMonitorObject(_ manager: HayateSocketManagerBase) {
         socketManagers.append(manager)
     }
     
-    func notify(manager: HayateSocketManagerBase) {
+    func notify(_ manager: HayateSocketManagerBase) {
         var waitSend: Int = 0
         var waitResponse: Int = 0
         for item in socketManagers {
@@ -29,13 +29,13 @@ public class HayateSocketMonitor: NSObject {
         globalWaitSendCount = waitSend
         globalWaitResponseCount = waitResponse
         print("待发送队列数:\(globalWaitSendCount) 待接收队列数:\(globalWaitResponseCount)")
-        dispatch_async(dispatch_get_main_queue()) { 
+        DispatchQueue.main.async { 
             if waitSend + waitResponse > 0 {
-                if UIApplication.sharedApplication().networkActivityIndicatorVisible == false {
-                    UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+                if UIApplication.shared.isNetworkActivityIndicatorVisible == false {
+                    UIApplication.shared.isNetworkActivityIndicatorVisible = true
                 }
             }else{
-                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+                UIApplication.shared.isNetworkActivityIndicatorVisible = false
             }
         }
     }
@@ -45,16 +45,16 @@ class HayateSocketHeartBeat: NSObject {
     
     override init() {
         super.init()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.didConnectToServer), name: HayateConnectSuccessNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.didDisConnectToServer), name: HayateDisConnectNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.didConnectToServer), name: NSNotification.Name(rawValue: HayateConnectSuccessNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.didDisConnectToServer), name: NSNotification.Name(rawValue: HayateDisConnectNotification), object: nil)
     }
     
     func didConnectToServer() {
-        self.performSelectorOnMainThread(#selector(self.startHeartBeat), withObject: nil, waitUntilDone: true)
+        self.performSelector(onMainThread: #selector(self.startHeartBeat), with: nil, waitUntilDone: true)
     }
     
     func didDisConnectToServer() {
-        NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: #selector(self.startHeartBeat), object: nil)
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.startHeartBeat), object: nil)
     }
     
     func startHeartBeat() {
@@ -63,6 +63,6 @@ class HayateSocketHeartBeat: NSObject {
         heartBeat.sendRequest { (status) in
             
         }
-        self.performSelector(#selector(self.startHeartBeat), withObject: nil, afterDelay: 20)
+        self.perform(#selector(self.startHeartBeat), with: nil, afterDelay: 20)
     }
 }

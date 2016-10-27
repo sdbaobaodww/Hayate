@@ -12,78 +12,78 @@ import Foundation
  * 证券标记
  */
 public enum DZHSecurityFlag: Int {
-    case None//无
-    case Margin//融资融券
-    case XSBBasic//新三板基础层
-    case XSBInnovate//新三板创新层
-    case XGMBond//公募债
+    case none//无
+    case margin//融资融券
+    case xsbBasic//新三板基础层
+    case xsbInnovate//新三板创新层
+    case xgmBond//公募债
 }
 
 /**
  * 市场类型
  */
 public enum DZHMarketType: Int {
-    case SH		= 1	// 上海
-    case SZ		= 2	// 深圳
-    case HK		= 3 // 香港
-    case IX		= 4 // 全球指数
-    case CK		= 5 // 全球期货
-    case FE		= 6 // 外汇
-    case OF		= 7 // 开放基金
-    case BI		= 8	// 板块指数
-    case SF		= 9 // 上海金融期货（股指期货）
-    case SC		= 10 // 上海期货
-    case ZC		= 11 // 郑州期货
-    case DC		= 12 // 大连期货
-    case SG		= 13 // 上海黄金
-    case SO     = 14 // 三板市场
-    case ZH		= 15 // B转H股
-    case OP     = 16 // 期权市场
-    case HKT    = 17 // 港股通
-    case US		= 18 // 美股
+    case sh		= 1	// 上海
+    case sz		= 2	// 深圳
+    case hk		= 3 // 香港
+    case ix		= 4 // 全球指数
+    case ck		= 5 // 全球期货
+    case fe		= 6 // 外汇
+    case of		= 7 // 开放基金
+    case bi		= 8	// 板块指数
+    case sf		= 9 // 上海金融期货（股指期货）
+    case sc		= 10 // 上海期货
+    case zc		= 11 // 郑州期货
+    case dc		= 12 // 大连期货
+    case sg		= 13 // 上海黄金
+    case so     = 14 // 三板市场
+    case zh		= 15 // B转H股
+    case op     = 16 // 期权市场
+    case hkt    = 17 // 港股通
+    case us		= 18 // 美股
     
     init(market: String) {
         switch market {
         case "SH":
-            self = .SH
+            self = .sh
         case "SZ":
-            self = .SZ
+            self = .sz
         case "HK":
-            self = .HK
+            self = .hk
         case "IX":
-            self = .IX
+            self = .ix
         case "CK":
-            self = .CK
+            self = .ck
         case "FE":
-            self = .FE
+            self = .fe
         case "IB":
-            self = .FE
+            self = .fe
         case "OF":
-            self = .OF
+            self = .of
         case "BI":
-            self = .BI
+            self = .bi
         case "SF":
-            self = .SF
+            self = .sf
         case "SC":
-            self = .SC
+            self = .sc
         case "ZC":
-            self = .ZC
+            self = .zc
         case "DC":
-            self = .DC
+            self = .dc
         case "SG":
-            self = .SG
+            self = .sg
         case "SO":
-            self = .SO
+            self = .so
         case "ZH":
-            self = .ZH
+            self = .zh
         case "HH":
-            self = .HKT
+            self = .hkt
         case "NS":
-            self = .US
+            self = .us
         case "NY":
-            self = .US
+            self = .us
         default:
-            self = .SH
+            self = .sh
         }
     }
 }
@@ -92,119 +92,119 @@ public enum DZHMarketType: Int {
  * 证券类型
  */
 public enum DZHSecurityType: Int {
-    case UNKNOWN        = -1//不清楚类型时使用
-    case INDEX          = 0 // 指数
-    case STOCK          = 1	// 股票
-    case FUND           = 2 // 基金
-    case BOND           = 3 // 债券
-    case OTHER_STOCK    = 4 // 其它股票
-    case OPTION         = 5 // 选择权
-    case EXCHANGE       = 6	// 外汇
-    case FUTURE         = 7 // 期货
-    case FTR_IDX		= 8 // 期指
-    case RGZ			= 9 // 认购证
-    case ETF			= 10 // ETF
-    case LOF			= 11 // LOF
-    case COV_BOND       = 12 // 可转债
-    case TRUST          = 13 // 信托
-    case WARRANT        = 14 // 权证
-    case REPO           = 15 // 回购
-    case STOCKB         = 16 // B股
-    case COMM           = 17 // 商品现货
-    case ENTRY          = 18 // 入库
-    case FENJIAFUND     = 27 //分级A基金
-    case FENJIBFUND     = 28 //分级B基金
-    case FENJIMUFUND    = 29 //分级母基金
+    case unknown        = -1//不清楚类型时使用
+    case index          = 0 // 指数
+    case stock          = 1	// 股票
+    case fund           = 2 // 基金
+    case bond           = 3 // 债券
+    case other_STOCK    = 4 // 其它股票
+    case option         = 5 // 选择权
+    case exchange       = 6	// 外汇
+    case future         = 7 // 期货
+    case ftr_IDX		= 8 // 期指
+    case rgz			= 9 // 认购证
+    case etf			= 10 // ETF
+    case lof			= 11 // LOF
+    case cov_BOND       = 12 // 可转债
+    case trust          = 13 // 信托
+    case warrant        = 14 // 权证
+    case repo           = 15 // 回购
+    case stockb         = 16 // B股
+    case comm           = 17 // 商品现货
+    case entry          = 18 // 入库
+    case fenjiafund     = 27 //分级A基金
+    case fenjibfund     = 28 //分级B基金
+    case fenjimufund    = 29 //分级母基金
 }
 
 /**
  * 指标类型
  */
 public enum DZHIndicatorsType: Int32 {
-    case MINUTE         // 分时
-    case MINUTE_VOL     // 分时成交量
-    case MINUTE_DDX     // 分时ddx
-    case MINUTE_DIFFER  // 分时单差
-    case MINUTE_TOTALVOL// 分时总买卖量
-    case MINUTE_SHOOT   // 分时突
+    case minute         // 分时
+    case minute_VOL     // 分时成交量
+    case minute_DDX     // 分时ddx
+    case minute_DIFFER  // 分时单差
+    case minute_TOTALVOL// 分时总买卖量
+    case minute_SHOOT   // 分时突
     
-    case KLINE          // K线
-    case KLINE_MA       // K线均线
-    case KLINE_VOL      // K线成交量
-    case KLINE_VOL_MA   // K线成交量均线
-    case KLINE_MACD     // K线MACD
-    case KLINE_KDJ      // K线KDJ
-    case KLINE_RSI      // K线RSI
-    case KLINE_BIAS     // K线BIAS
-    case KLINE_CCI      // K线CCI
-    case KLINE_DDX      // K线DDX
-    case KLINE_DDY      // K线DDY
-    case KLINE_DDZ      // K线DDZ
-    case KLINE_MAINMEM  // K线主力资金线
-    case KLINE_BS       // K线BS点
-    case KLINE_BOLL     // K线BOLL
-    case KLINE_WR       // K线WR
-    case KLINE_DMA      // K线DMA
-    case KLINE_D        // K线D信号
+    case kline          // K线
+    case kline_MA       // K线均线
+    case kline_VOL      // K线成交量
+    case kline_VOL_MA   // K线成交量均线
+    case kline_MACD     // K线MACD
+    case kline_KDJ      // K线KDJ
+    case kline_RSI      // K线RSI
+    case kline_BIAS     // K线BIAS
+    case kline_CCI      // K线CCI
+    case kline_DDX      // K线DDX
+    case kline_DDY      // K线DDY
+    case kline_DDZ      // K线DDZ
+    case kline_MAINMEM  // K线主力资金线
+    case kline_BS       // K线BS点
+    case kline_BOLL     // K线BOLL
+    case kline_WR       // K线WR
+    case kline_DMA      // K线DMA
+    case kline_D        // K线D信号
 }
 
 /**
  * 值比较，上涨、下跌、不变
  */
 public enum DZHValueVary {
-    case Rise
-    case Fall
-    case Cross
+    case rise
+    case fall
+    case cross
 }
 
 extension Int32 {
     
-    public func vary(otherValue: Int32) -> DZHValueVary {
+    public func vary(_ otherValue: Int32) -> DZHValueVary {
         if self > otherValue {
-            return .Rise
+            return .rise
         }else if self < otherValue {
-            return .Fall
+            return .fall
         }else {
-            return .Cross
+            return .cross
         }
     }
 }
 
 extension Int {
     
-    public func vary(otherValue: Int) -> DZHValueVary {
+    public func vary(_ otherValue: Int) -> DZHValueVary {
         if self > otherValue {
-            return .Rise
+            return .rise
         }else if self < otherValue {
-            return .Fall
+            return .fall
         }else {
-            return .Cross
+            return .cross
         }
     }
 }
 
 extension Double {
     
-    public func vary(otherValue: Double) -> DZHValueVary {
+    public func vary(_ otherValue: Double) -> DZHValueVary {
         if self > otherValue {
-            return .Rise
+            return .rise
         }else if self < otherValue {
-            return .Fall
+            return .fall
         }else {
-            return .Cross
+            return .cross
         }
     }
 }
 
 extension Float {
     
-    public func vary(otherValue: Float) -> DZHValueVary {
+    public func vary(_ otherValue: Float) -> DZHValueVary {
         if self > otherValue {
-            return .Rise
+            return .rise
         }else if self < otherValue {
-            return .Fall
+            return .fall
         }else {
-            return .Cross
+            return .cross
         }
     }
 }
@@ -212,71 +212,71 @@ extension Float {
 /**
  * 证券数据模型，如股票、基金、债券等
  */
-public class DZHSecurityModel: NSObject {
-    public var code: NSString//证券代码
-    public var briefCode: NSString?//去掉市场代码
-    public var marketType: DZHMarketType//市场类型
-    public var name: NSString?//证券名称
-    public var lastClose: CInt = 0//昨收
-    public var price: CInt = 0//最新价
-    public var high: CInt = 0//最高价
-    public var low: CInt = 0//最低价
-    public var precision: CInt = 0//价格小数位数
-    public var flag: DZHSecurityFlag = .None//证券标记
-    public var type: DZHSecurityType = .UNKNOWN//证券类型
-    public var indicators: Dictionary<DZHIndicatorsType, DZHIndicatorsModel> = Dictionary<DZHIndicatorsType, DZHIndicatorsModel>()//各种指标数据
+open class DZHSecurityModel: NSObject {
+    open var code: NSString//证券代码
+    open var briefCode: NSString?//去掉市场代码
+    open var marketType: DZHMarketType//市场类型
+    open var name: NSString?//证券名称
+    open var lastClose: CInt = 0//昨收
+    open var price: CInt = 0//最新价
+    open var high: CInt = 0//最高价
+    open var low: CInt = 0//最低价
+    open var precision: CInt = 0//价格小数位数
+    open var flag: DZHSecurityFlag = .none//证券标记
+    open var type: DZHSecurityType = .unknown//证券类型
+    open var indicators: Dictionary<DZHIndicatorsType, DZHIndicatorsModel> = Dictionary<DZHIndicatorsType, DZHIndicatorsModel>()//各种指标数据
     
     init(code: NSString, name: NSString?, type: DZHSecurityType) {
         self.code = code
         if (code.length > 2)
         {
-            self.briefCode = code.substringFromIndex(2);
-            self.marketType = DZHMarketType(market: code.substringToIndex(2))
+            self.briefCode = code.substring(from: 2) as NSString?;
+            self.marketType = DZHMarketType(market: code.substring(to: 2))
         }else{
-            self.marketType = .SH
+            self.marketType = .sh
         }
         super.init()
     }
     
     convenience init(code: NSString, name: NSString?) {
-        self.init(code: code, name: name, type: .UNKNOWN);
+        self.init(code: code, name: name, type: .unknown);
     }
     
     convenience init(code: NSString) {
-        self.init(code: code, name: nil, type: .UNKNOWN);
+        self.init(code: code, name: nil, type: .unknown);
     }
 }
 
 /**
  * 指标基础数据模型，只依赖基础数据，不依赖其它指标
  */
-public class DZHIndicatorsModel: NSObject {
-    public var max: Int = 0 //最大值
-    public var min: Int = 0 //最小值
-    public var precision: CInt = 0//小数位数
-    public var items = NSMutableArray() //数据项
+open class DZHIndicatorsModel: NSObject {
+    open var max: Int = 0 //最大值
+    open var min: Int = 0 //最小值
+    open var precision: CInt = 0//小数位数
+    open var items = NSMutableArray() //数据项
     
     /**
      * 对数据进行处理
      * 1，根据原始数据生成指标模型数据，并放置在items的正确位置
      * 2，可对更新后的数据进行指标计算
      */
-    public func process(originData: NSMutableArray, update: HayatePageUpdate) {
-        let updateDatas = originData.subarrayWithRange(update.range)
+    open func process(_ originData: NSMutableArray, update: HayatePageUpdate) {
+        let updateDatas = originData.subarray(with: update.range)
         switch update.type {
         case .Init:
-            let models = self.createModelsWithOriginData(updateDatas)
-            items.addObjectsFromArray(models)
-        case .EndAppend:
-            let models = self.createModelsWithOriginData(updateDatas)
-            items.addObjectsFromArray(models)
-        case .FrontInsert:
-            let models = self.createModelsWithOriginData(updateDatas)
+            let models = self.createModelsWithOriginData(updateDatas as [AnyObject])
+            items.addObjects(from: models)
+        case .endAppend:
+            let models = self.createModelsWithOriginData(updateDatas as [AnyObject])
+            items.addObjects(from: models)
+        case .frontInsert:
+            let models = self.createModelsWithOriginData(updateDatas as [AnyObject])
             items.insertObjects(models, atIndex: 0)
-        case .Update:
+        case .update:
             let index = update.range.location
-            let models = self.createModelsWithOriginData(updateDatas)
-            items.replaceObjectsAtIndexes(NSIndexSet(indexesInRange: NSMakeRange(index, items.count - index)), withObjects: models)
+            let models = self.createModelsWithOriginData(updateDatas as [AnyObject])
+            items.replaceObjects(at: IndexSet(integersIn: NSMakeRange(index, items.count - index).toRange() ?? 0..<0), with: models)
         default:
             break
         }
@@ -284,7 +284,7 @@ public class DZHIndicatorsModel: NSObject {
         self.calculateTechnical(indexSet)//计算指标
     }
     
-    public func createModelsWithOriginData(origins: [AnyObject]) -> [AnyObject] {
+    open func createModelsWithOriginData(_ origins: [AnyObject]) -> [AnyObject] {
         return []
     }
     
@@ -293,11 +293,11 @@ public class DZHIndicatorsModel: NSObject {
      * @param update 页面数据变更信息
      * @returns 索引集合
      */
-    func needRecalculateIndexs(update: HayatePageUpdate) -> NSIndexSet {
-        return NSIndexSet(indexesInRange: NSMakeRange(0, items.count))
+    func needRecalculateIndexs(_ update: HayatePageUpdate) -> IndexSet {
+        return IndexSet(integersIn: NSMakeRange(0, items.count).toRange()!)
     }
     
-    public func calculateTechnical(updateIndex: NSIndexSet) {
+    open func calculateTechnical(_ updateIndex: IndexSet) {
         
     }
     
@@ -306,17 +306,17 @@ public class DZHIndicatorsModel: NSObject {
      * @param from 开始索引
      * @param to 结束索引
      */
-    public func calculateMaxAndMin(from: Int, to: Int) {
+    open func calculateMaxAndMin(_ from: Int, to: Int) {
         
     }
 }
 
-public class DZHKLineModel: DZHIndicatorsModel {
+open class DZHKLineModel: DZHIndicatorsModel {
     
-    public override func createModelsWithOriginData(origins: [AnyObject]) -> [AnyObject] {
+    open override func createModelsWithOriginData(_ origins: [AnyObject]) -> [AnyObject] {
         var results: [AnyObject] = []
         for data in origins {
-            results.append(DZHKLineItemModel(origin: data as! DZHResponsePackage2944Item))
+//            results.append(DZHKLineItemModel(origin: data as! DZHResponsePackage2944Item))
         }
         return results
     }
@@ -341,11 +341,11 @@ public class DZHKLineModel: DZHIndicatorsModel {
 //        }
 //    }
     
-    public override func calculateTechnical(updateIndex: NSIndexSet) {
+    open override func calculateTechnical(_ updateIndex: IndexSet) {
         
     }
     
-    public override func calculateMaxAndMin(from: Int, to: Int) {
+    open override func calculateMaxAndMin(_ from: Int, to: Int) {
         
     }
 }

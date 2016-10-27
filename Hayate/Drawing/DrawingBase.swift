@@ -10,8 +10,8 @@ import Foundation
 import UIKit
 
 enum AxisYType {
-    case Right
-    case Left
+    case right
+    case left
 }
 
 struct DWWDraingContext {
@@ -31,7 +31,7 @@ protocol DWWDrawing {
     
     var plotData:NSArray{get set}
     
-    func buildPlotData(originData:NSArray)
+    func buildPlotData(_ originData:NSArray)
     
-    func draw(context:CGContext, drawingContext:DWWDraingContext)
+    func draw(_ context:CGContext, drawingContext:DWWDraingContext)
 }
